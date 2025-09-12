@@ -47,7 +47,7 @@ export default function Home() {
         const today = new Date().toISOString().split('T')[0]
         console.log(`Fetching data for: ${today}`)
         
-        const response = await fetch(`/data/${today}.json`)
+        const response = await fetch(`data/${today}.json`)
         
         if (response.ok) {
           const data = await response.json()
