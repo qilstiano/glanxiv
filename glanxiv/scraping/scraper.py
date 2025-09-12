@@ -1,6 +1,6 @@
 import arxiv
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import os
 
 def fetch_arxiv_papers(category="cs.CV", days=1):
@@ -41,14 +41,17 @@ def fetch_arxiv_papers(category="cs.CV", days=1):
     return papers
 
 if __name__ == "__main__":
+
+    utc_now = datetime.now(timezone.utc)
+
     # Fetch papers from last 7 days
     papers = fetch_arxiv_papers(category="cs.CV", days=7)
     
     # Create data directory if it doesn't exist
-    os.makedirs("data", exist_ok=True)
+    os.makedirs("public/data", exist_ok=True)
     
     # Save to JSON file
-    filename = f"data/{datetime.now().strftime('%Y-%m-%d')}.json"
+    filename = f"public/data/{utc_now.strftime('%Y-%m-%d')}.json"
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(papers, f, indent=2, ensure_ascii=False)
     
