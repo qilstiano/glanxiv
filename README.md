@@ -1,4 +1,3 @@
-```markdown
 # glanxiv
 
 a modern ui wrapper for arxiv that i built because i got bored of the default interface and have been using arxiv a lot recently for research. wanted something cleaner and more enjoyable to browse papers with.
@@ -28,4 +27,3 @@ built with react, typescript, and chakra ui. uses the arxiv api to fetch papers 
 ---
 
 *made out of boredom, love and a need for better research tools, shoutout to deepseek*
-```
