@@ -23,6 +23,7 @@ jobs:
 
       - name: Run scraper
         run: |
+          cd glanxiv/glanxiv/scraping
           python scraper.py
 
       - name: Commit and push changes
