@@ -205,7 +205,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
               {/* Right: Actions */}
               <Flex align="center" gap={2} justify="flex-end" flexShrink={0}>
                 {/* GitHub Button with Star Count - Hidden on mobile */}
-                <GithubButton/>
+                <GithubButton username={'qilstiano'} repo={'glanxiv'}/>
                 
                 {/* Theme Toggle */}
                 <IconButton

@@ -50,10 +50,6 @@ const GithubButton: React.FC<GithubButtonProps> = ({
         as="button"
         onClick={handleClick}
         className="glow-button"
-        sx={{
-          padding: isScrolled ? '6px 12px' : '8px 16px',
-          fontSize: isScrolled ? '14px' : '16px',
-        }}
       >
         <Box className="btn-inner">
           <Box gap={2} display="flex">

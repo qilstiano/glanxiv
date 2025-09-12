@@ -302,17 +302,13 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
               
               <Button
                 as="a"
-                href={paper.pdf_url}
-                target="_blank"
-                rel="noopener noreferrer"
                 size="sm"
                 variant="surface"
                 colorPalette="blue"
-                rightIcon={<ExternalLink size={14} />}
                 ml="auto"
               >
                 <ExternalLink size={16} />
-                arXiv
+                <a href={paper.pdf_url}>arXiv</a>
               </Button>
             </HStack>
           </VStack>
@@ -482,16 +478,14 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                         </VStack>
                         
                         <Button 
-                          as="a" 
-                          href={paper.pdf_url}
-                          target="_blank"
+                          as="a"
                           rel="noopener noreferrer"
                           colorPalette="blue"
-                          rightIcon={<ExternalLink size={14} />}
                           fontFamily="var(--font-geist)"
                           mt={4}
                         >
-                          Open PDF in new tab
+                          <ExternalLink size={14} />
+                          <a href={paper.pdf_url}>Open PDF in new tab</a>
                         </Button>
                       </VStack>
                     </Box>
