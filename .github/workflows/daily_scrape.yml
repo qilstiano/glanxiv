@@ -12,6 +12,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug directory structure
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Directory contents:"
+          ls -la
+          echo "Looking for Python files:"
+          find . -name "*.py" -type f | head -20
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -21,9 +29,18 @@ jobs:
         run: |
           pip install arxiv
 
-      - name: Run scraper
+      - name: Find and run scraper
         run: |
-          cd glanxiv/glanxiv/scraping
+          # Try to find the scraper.py file
+          SCRAPER_PATH=$(find . -name "scraper.py" -type f | head -1)
+          if [ -z "$SCRAPER_PATH" ]; then
+            echo "Error: scraper.py not found!"
+            find . -name "*.py" -type f
+            exit 1
+          fi
+          echo "Found scraper at: $SCRAPER_PATH"
+          SCRAPER_DIR=$(dirname "$SCRAPER_PATH")
+          cd "$SCRAPER_DIR"
           python scraper.py
 
       - name: Commit and push changes
