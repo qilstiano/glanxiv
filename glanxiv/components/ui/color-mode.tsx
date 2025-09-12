@@ -7,7 +7,7 @@ import type { ThemeProviderProps } from "next-themes"
 import * as React from "react"
 import { LuMoon, LuSun } from "react-icons/lu"
 
-export interface ColorModeProviderProps extends ThemeProviderProps {}
+export type ColorModeProviderProps = ThemeProviderProps
 
 export function ColorModeProvider(props: ColorModeProviderProps) {
   return (
