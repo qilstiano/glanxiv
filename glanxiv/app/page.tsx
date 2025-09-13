@@ -7,31 +7,10 @@ import ErrorDisplay from '../components/ErrorDisplay'
 import PapersGrid from '../components/PapersGrid'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { Paper } from './types'
+import Footer from '@/components/Footer'
 
 // Sample data fallback
-const sampleData: Paper[] = [
-  {
-    id: "http://arxiv.org/abs/2509.09680v1",
-    title: "FLUX-Reason-6M & PRISM-Bench: A Million-Scale Text-to-Image Reasoning Dataset and Comprehensive Benchmark",
-    authors: ["Rongyao Fang", "Aldrich Yu", "Chengqi Duan", "Linjiang Huang", "Shuai Bai", "Yuxuan Cai", "Kun Wang", "Si Liu", "Xihui Liu", "Hongsheng Li"],
-    abstract: "The advancement of open-source text-to-image (T2I) models has been hindered by the absence of large-scale, reasoning-focused datasets and comprehensive evaluation benchmarks. To address this gap, we introduce FLUX-Reason-6M, a comprehensive dataset containing 6 million text-to-image pairs with detailed reasoning annotations. This dataset enables fine-grained evaluation of T2I models' ability to understand and generate images based on complex textual descriptions involving spatial relationships, object interactions, and abstract concepts.",
-    pdf_url: "http://arxiv.org/pdf/2509.09680v1",
-    published: "2025-09-11T17:59:59+00:00",
-    categories: ["cs.CV", "cs.CL", "cs.AI"],
-    primary_category: "cs.CV"
-  },
-  {
-    id: "http://arxiv.org/abs/2509.09681v1", 
-    title: "Neural Architecture Search for Efficient Vision Transformers",
-    authors: ["Sarah Chen", "Michael Rodriguez", "Jennifer Kim"],
-    abstract: "Vision Transformers (ViTs) have achieved remarkable performance in computer vision tasks, but their computational complexity remains a significant challenge for deployment in resource-constrained environments. We propose a novel neural architecture search (NAS) approach specifically designed for discovering efficient ViT architectures that maintain high accuracy while reducing computational overhead.",
-    pdf_url: "http://arxiv.org/pdf/2509.09681v1",
-    published: "2025-09-11T16:30:00+00:00", 
-    categories: ["cs.CV", "cs.LG"],
-    primary_category: "cs.CV"
-  },
-  // Add more sample papers as needed
-]
+const sampleData: Paper[] = []
 
 export default function Home() {
   const [papers, setPapers] = useState<Paper[]>([])
@@ -123,6 +102,7 @@ export default function Home() {
       <Box py={8} px={{ base: 4, md: 6 }} maxW="7xl" mx="auto">
         <PapersGrid papers={filteredPapers} isDark={isDark} />
       </Box>
+      <Footer isDark={isDark}/>
     </Box>
   )
 }

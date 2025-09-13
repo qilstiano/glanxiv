@@ -17,7 +17,7 @@ import {
   useBreakpointValue,
   IconButton,
 } from '@chakra-ui/react'
-import { ExternalLink, ChevronDown, ChevronUp, GripVertical, Eye, EyeOff, MoonStar , Sun, Moon } from 'lucide-react'
+import { ExternalLink, ChevronDown, ChevronUp, GripVertical, Eye, EyeOff, MoonStar , Sun, Moon, Expand } from 'lucide-react'
 import { Paper } from '../app/types'
 import { useState, useRef, useEffect } from 'react'
 
@@ -37,19 +37,43 @@ interface PaperCardProps {
 // Function to generate random gradient colors
 const getRandomGradient = () => {
   const colors = [
-    ['#ff6b6b', '#4ecdc4'],
-    ['#45b7d1', '#96ceb4'],
-    ['#feca57', '#ff9ff3'],
-    ['#54a0ff', '#5f27cd'],
-    ['#00d2d3', '#54a0ff'],
-    ['#ff9ff3', '#f368e0'],
-    ['#48dbfb', '#0abde3'],
-    ['#10ac84', '#1dd1a1'],
-    ['#ee5a24', '#ff9ff3'],
-    ['#c56cf0', '#ffb8b8']
+    ['#ff6b6b', '#4ecdc4', '#1dd1a1'],
+    ['#45b7d1', '#96ceb4', '#00c6ff'],
+    ['#feca57', '#ff9ff3', '#f368e0'],
+    ['#54a0ff', '#5f27cd', '#48dbfb'],
+    ['#00d2d3', '#54a0ff', '#6a11cb'],
+    ['#ff9ff3', '#f368e0', '#c56cf0'],
+    ['#48dbfb', '#0abde3', '#10ac84'],
+    ['#10ac84', '#1dd1a1', '#11998e'],
+    ['#ee5a24', '#ff9ff3', '#ff7e5f'],
+    ['#c56cf0', '#ffb8b8', '#fc5c7d'],
+
+    // Extended ones with 3rd stops
+    ['#ff7e5f', '#feb47b', '#ffd200'],
+    ['#6a11cb', '#2575fc', '#8e2de2'],
+    ['#f7971e', '#ffd200', '#ff9966'],
+    ['#00c6ff', '#0072ff', '#56ccf2'],
+    ['#ff9966', '#ff5e62', '#fc5c7d'],
+    ['#8360c3', '#2ebf91', '#38ef7d'],
+    ['#fc5c7d', '#6a82fb', '#f368e0'],
+    ['#11998e', '#38ef7d', '#00b09b'],
+    ['#fd746c', '#ff9068', '#ff4b2b'],
+    ['#8e2de2', '#4a00e0', '#6a11cb'],
+    ['#ff4b2b', '#ff416c', '#ff6b6b'],
+    ['#56ccf2', '#2f80ed', '#00f260'],
+    ['#00b09b', '#96c93d', '#10ac84'],
+    ['#f953c6', '#b91d73', '#d53369'],
+    ['#ffecd2', '#fcb69f', '#feb47b'],
+    ['#00f260', '#0575e6', '#48dbfb'],
+    ['#eecda3', '#ef629f', '#ff9ff3'],
+    ['#a18cd1', '#fbc2eb', '#c56cf0'],
+    ['#4e54c8', '#8f94fb', '#6a82fb'],
+    ['#d53369', '#cbad6d', '#f7971e']
   ]
+
   return colors[Math.floor(Math.random() * colors.length)]
 }
+
 
 export default function PaperCard({ paper, isDark }: PaperCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -183,19 +207,18 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
 
       <Card.Root 
         bg={isDark ? "gray.800" : "white"} 
-        shadow="md" 
-        _hover={{ shadow: 'lg', transform: 'translateY(-4px)' }} 
+        _hover={{ transform: 'translateY(-4px)' }} 
         transition="all 0.2s"
         overflow="hidden"
         height="auto"
         minHeight="320px"
-        maxHeight="400px"
+        maxHeight="500px"
       >
         {/* Title with gradient background */}
         <Box 
           position="relative"
           h="120px"
-          background={`linear-gradient(to right, ${gradient[0]}, ${gradient[1]})`}
+          background={`linear-gradient(to right, ${gradient[0]}, ${gradient[1]}, ${gradient[2]})`}
           p={4}
           display="flex"
           alignItems="flex-end"
@@ -224,7 +247,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                 colorPalette="blue"
                 borderRadius="full"
                 fontFamily="var(--font-geist-mono)"
-                color={isDark ? "white" : "gray.800"}
+                color="white"
               >
                 <Tag.Label>#{paper.primary_category}</Tag.Label>
               </Tag.Root>
@@ -275,7 +298,6 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                 lineHeight="1.2"
               >
                 by {paper.authors.slice(0, 3).join(', ')}
-                {paper.authors.length > 3 && ` et al.`}
               </Text>
               <Text 
                 fontSize="xs" 
@@ -290,12 +312,13 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
             <HStack w="full" justify="space-between" mt={2}>
               {paper.abstract.length > 200 && (
                 <Button
-                  variant="ghost"
+                  variant={isDark ? "outline" : "solid"}
                   size="sm"
+                  colorPalette={"gray"}
                   onClick={() => setIsExpanded(true)}
-                  color={isDark ? "gray.400" : "gray.500"}
+                  color={isDark ? "orange" : "black"}
                 >
-                  <ChevronDown size={14} />
+                  <Expand size={14} color={isDark ? "orange" : "black"}/>
                   Read more
                 </Button>
               )}
@@ -303,12 +326,14 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
               <Button
                 as="a"
                 size="sm"
-                variant="surface"
-                colorPalette="blue"
+                variant={isDark ? "outline" : "solid"}
                 ml="auto"
+                color={isDark ? "white" : "gray"}
+                colorPalette={"gray"}
+                _hover={{ textDecoration: 'underline' }}
               >
                 <ExternalLink size={16} />
-                <a href={paper.pdf_url}>arXiv</a>
+                <a href={paper.pdf_url}></a>arXiv
               </Button>
             </HStack>
           </VStack>
@@ -316,7 +341,9 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
       </Card.Root>
 
       {/* Expanded view dialog */}
-      <Dialog.Root open={isExpanded} onOpenChange={() => setIsExpanded(false)}>
+      <Dialog.Root 
+        open={isExpanded} 
+        onOpenChange={() => setIsExpanded(false)}>
         <Portal>
           <DialogBackdrop bg="blackAlpha.700"/>
           <DialogPositioner>
@@ -334,6 +361,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
               <DialogHeader 
                 borderBottomWidth="1px" 
                 borderColor={isDark ? "gray.700" : "gray.200"}
+                background={`linear-gradient(to right, ${gradient[0]}, ${gradient[1]}, ${gradient[2]})`}
                 pr={10}
                 py={3}
                 px={4}
@@ -353,27 +381,29 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                 </Text>
                 
                 {/* Header controls */}
-                <HStack>
+                <HStack gap={5}>
                   {/* Toggle PDF dark mode */}
                   <IconButton
-                    variant="ghost"
+                    variant="plain"
                     size="sm"
                     onClick={togglePdfDarkMode}
                     aria-label={isPdfDarkMode ? "Light mode" : "Dark mode"}
                     title={isPdfDarkMode ? "Switch to light mode" : "Switch to dark mode"}
                   >
-                    {isPdfDarkMode ? <Sun size={16} /> : <MoonStar size={16} />}
+                    {isPdfDarkMode ? <Sun size={16} color="orange"/> : <MoonStar size={16} color="blue"/>}
+                    {isPdfDarkMode ? <Text color="orange" fontFamily="var(--font-geist-mono)"> Light </Text> : <Text color="blue" fontFamily="var(--font-geist-mono)"> Dark </Text> }
                   </IconButton>
                   
                   {/* Toggle summary visibility */}
                   <IconButton
-                    variant="ghost"
-                    size="sm"
+                    variant="plain"
+                    size="md"
                     onClick={toggleSummary}
                     aria-label={showSummary ? "Hide summary" : "Show summary"}
                     title={showSummary ? "Hide summary" : "Show summary"}
                   >
                     {showSummary ? <EyeOff size={16} /> : <Eye size={16} />}
+                    <Text fontFamily="var(--font-geist-mono)"> Toggle summary </Text>
                   </IconButton>
                 </HStack>
               </DialogHeader>
@@ -401,8 +431,8 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                       ml="-6px"
                     >
                       <Box
-                        width="4px"
-                        height="24px"
+                        width="8px"
+                        height="50px"
                         borderRadius="full"
                         bg={isDark ? "gray.500" : "gray.400"}
                         display="flex"
@@ -410,7 +440,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                         justifyContent="center"
                         position="relative"
                       >
-                        <GripVertical size={12} />
+                        <GripVertical />
                       </Box>
                     </Box>
                   )}
@@ -434,7 +464,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                               colorPalette={category === paper.primary_category ? "blue" : "gray"}
                               borderRadius="full"
                               fontFamily="var(--font-geist-mono)"
-                              color={isDark ? "white" : "gray.300"}
+                              color="white"
                             >
                               <Tag.Label>#{category}</Tag.Label>
                             </Tag.Root>
@@ -445,7 +475,6 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                           color={isDark ? "gray.300" : "gray.600"}
                           lineHeight="1.6"
                           fontFamily="var(--font-geist)"
-                          whiteSpace="pre-line"
                         >
                           {paper.abstract}
                         </Text>

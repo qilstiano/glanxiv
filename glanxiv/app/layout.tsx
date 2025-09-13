@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 import { ThemeProvider } from './ThemeProvider'
 
 export const metadata: Metadata = {
-  title: 'glanxiv | arXiv modernised',
-  description: 'A modern interface for browsing arXiv papers',
+  title: 'glanxiv/library',
+  description: 'a modern interface for browsing research papers',
 }
 
 export default function RootLayout({

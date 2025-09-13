@@ -8,11 +8,11 @@
 @keyframes rotate {
   0% {
     --angle: 0deg;
-    --glowColor: #3f3e3d;
+    --glowColor: #51ff00;
   }
   100% {
     --angle: 360deg;
-    --glowColor: #3f3e3d;
+    --glowColor: #51ff00;
   }
 }
 
@@ -75,13 +75,13 @@
   font-weight: 500;
   z-index: 1;
   transition: all 0.18s ease;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(223, 223, 223, 0.452);
   backdrop-filter: blur(40px);
   backface-visibility: hidden;
 }
 
 .glow-button:hover .btn-inner {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(108, 228, 118);
   color: #ffffff;
 }
 

@@ -69,7 +69,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
       <motion.div
         initial={false}
         animate={{ 
-          height: isScrolled ? (isMobile ? 60 : 70) : (isMobile ? 80 : 100),
+          height: isScrolled ? (isMobile ? 70 : 80) : (isMobile ? 100 : 120),
           borderRadius: isScrolled ? (isMobile ? 12 : 16) : 0,
           backdropFilter: isScrolled ? 'blur(10px)' : 'none',
           backgroundColor: isScrolled 
@@ -99,7 +99,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
               justify="space-between" 
               align="center" 
               px={{ base: 4, md: 6 }} 
-              py={{ base: 3, md: 4 }}
+              py={{ base: 1, md: 2 }}
               flex="1"
               maxW="7xl" 
               mx="auto"
@@ -368,20 +368,18 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
         </Box>
       </motion.div>
 
-      {/* Spacer - Fixed height calculation */}
       <Box h={{ 
-        base: isScrolled ? '60px' : '80px', 
-        md: isScrolled ? '70px' : '100px'
+        base: isScrolled ? '80px' : '120px', 
+        md: isScrolled ? '120px' : '140px'
       }} />
 
-      {/* Mobile Drawer Menu */}
       <Drawer.Root open={isDrawerOpen} onOpenChange={(e) => setIsDrawerOpen(e.open)}>
         <Portal>
           <Drawer.Backdrop />
           <Drawer.Positioner>
-            <Drawer.Content bg={isDark ? "gray.900" : "white"} color={isDark ? "white" : "gray.900"}>
+            <Drawer.Content bg={isDark ? "gray.900" : "white"} color={isDark ? "white" : "gray.900"} fontFamily="var(--font-geist)">
               <Drawer.Header borderBottomWidth="1px" borderColor={isDark ? "gray.700" : "gray.200"}>
-                <Drawer.Title>Menu</Drawer.Title>
+                <Drawer.Title fontFamily="var(--font-geist)">Menu</Drawer.Title>
                 <Drawer.CloseTrigger asChild>
                   <IconButton
                     aria-label="Close menu"
@@ -419,6 +417,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
                       variant="ghost"
                       size="sm"
                       justifyContent="flex-start"
+                      fontFamily="var(--font-geist-mono)"
                       color={isDark ? "gray.300" : "gray.700"}
                       onClick={() => {
                         onCategoryChange(category.value);
