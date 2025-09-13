@@ -17,7 +17,7 @@ export default function PapersGrid({ papers, isDark, initialVisibleCount = 6 }: 
   if (papers.length === 0) {
     return (
       <Center py={12}>
-        <Text color={isDark ? "gray.400" : "gray.500"} fontSize="lg">
+        <Text color={isDark ? "gray.400" : "gray.500"} fontSize="lg" fontFamily="var(--font-geist)">
           No papers found. Try a different search term or check back later.
         </Text>
       </Center>
@@ -27,7 +27,10 @@ export default function PapersGrid({ papers, isDark, initialVisibleCount = 6 }: 
   const hasMore = visibleCount < papers.length
 
   return (
-    <VStack gap={6} align="stretch">
+    <VStack gap={4} align="stretch">
+      <Text color={isDark ? "gray.400" : "gray.500"} fontSize="sm" fontFamily="var(--font-geist-mono)">
+        /loaded {papers.length} papers
+      </Text>
       <SimpleGrid 
         columns={{ base: 1, sm: 2, md: 3, lg: 3 }} 
         gap={6}

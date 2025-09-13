@@ -205,7 +205,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
               justify="space-between" 
               align="center" 
               px={{ base: 4, md: 6 }} 
-              py={{ base: 3, md: 4 }}
+              py={{ base: 1, md: 2 }}
               flex="1"
               maxW="7xl" 
               mx="auto"
@@ -240,7 +240,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
                       src="/glanxiv_highres.png" 
                       alt="Glanxiv" 
                       h={{ 
-                        base: isScrolled ? "32px" : "36px", 
+                        base: isScrolled ? "18px" : "36px", 
                         md: isScrolled ? "36px" : "40px" 
                       }} 
                       w="auto" 
