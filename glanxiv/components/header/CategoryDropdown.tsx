@@ -24,7 +24,6 @@ function CategoryDropdown({
   selectedCategories,
   onCategoryChange,
   showCategoryDropdown,
-  setShowCategoryDropdown,
   searchTerm
 }: CategoryDropdownProps) {
   if (!showCategoryDropdown) return null;
@@ -177,7 +176,7 @@ function CategoryDropdown({
         {/* No results message */}
         {filteredCategories.length === 0 && (
           <Text color={isDark ? "gray.400" : "gray.500"} textAlign="center" py={4}>
-            No categories found matching "{searchTerm}"
+            No categories found matching &quot;{searchTerm}&quot;
           </Text>
         )}
       </VStack>

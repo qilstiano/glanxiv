@@ -19,7 +19,7 @@ import {
   LuMail,
   LuHeart
 } from "react-icons/lu";
-import { motion } from 'motion/react';
+
 
 // Footer data
 const footerLinks = {
@@ -52,7 +52,7 @@ function Footer({ isDark }: FooterProps) {
     <Box 
       as="footer"
       bg={isDark ? "gray.900" : "gray.50"}
-      color={isDark ? "gray.300" : "gray.800"} // Changed to gray.800 for better contrast in light mode
+      color={isDark ? "gray.300" : "gray.800"}
       borderTopWidth="1px"
       borderTopColor={isDark ? "gray.700" : "gray.200"}
       px={{ base: 4, md: 8 }}
@@ -65,28 +65,27 @@ function Footer({ isDark }: FooterProps) {
             <Image 
               src="/glanxiv.png" 
               alt="Glanxiv" 
-              height={isMobile ? 10 : 12}
+              height={isMobile ? 20 : 24}
               width="auto"
             />
           </Box>
         </Flex>
         
-        {/* Main footer content */}
+        {/* Main footer content - Centered */}
         <Grid 
           templateColumns={{ base: '1fr', md: '1fr 1fr 1fr' }} 
           gap={8}
           mb={12}
-          justifyItems={{ base: 'center', md: 'start' }}
+          justifyItems="center" // Changed from conditional to always center
         >
           {/* Product links */}
-          <VStack align={{ base: 'center', md: 'flex-start' }} gap={3}>
+          <VStack align="center" gap={3}> {/* Changed to always center */}
             <Text 
               fontWeight="semibold" 
-              color={isDark ? "white" : "black"} // Changed to black for light mode
+              color={isDark ? "white" : "black"}
               mb={2}
               fontSize="lg"
               fontFamily="var(--font-geist-mono)"
-
             >
               Product
             </Text>
@@ -96,6 +95,7 @@ function Footer({ isDark }: FooterProps) {
                 href={link.href}
                 fontSize="md"
                 color={isDark ? "gray.300" : "gray.700"}
+                textAlign="center"
                 _hover={{ 
                   color: isDark ? "orange.300" : "orange.600",
                   textDecoration: "none"
@@ -107,14 +107,13 @@ function Footer({ isDark }: FooterProps) {
           </VStack>
           
           {/* Resources links */}
-          <VStack align={{ base: 'center', md: 'flex-start' }} gap={3}>
+          <VStack align="center" gap={3}> {/* Changed to always center */}
             <Text 
               fontWeight="semibold" 
-              color={isDark ? "white" : "black"} // Changed to black for light mode
+              color={isDark ? "white" : "black"}
               mb={2}
               fontSize="lg"
               fontFamily="var(--font-geist-mono)"
-
             >
               Resources
             </Text>
@@ -124,6 +123,7 @@ function Footer({ isDark }: FooterProps) {
                 href={link.href}
                 fontSize="md"
                 color={isDark ? "gray.300" : "gray.700"}
+                textAlign="center"
                 _hover={{ 
                   color: isDark ? "orange.300" : "orange.600",
                   textDecoration: "none"
@@ -135,14 +135,13 @@ function Footer({ isDark }: FooterProps) {
           </VStack>
           
           {/* Company links */}
-          <VStack align={{ base: 'center', md: 'flex-start' }} gap={3}>
+          <VStack align="center" gap={3}> {/* Changed to always center */}
             <Text 
               fontWeight="semibold" 
-              color={isDark ? "white" : "black"} // Changed to black for light mode
+              color={isDark ? "white" : "black"}
               mb={2}
               fontSize="lg"
               fontFamily="var(--font-geist-mono)"
-
             >
               Others
             </Text>
@@ -152,6 +151,7 @@ function Footer({ isDark }: FooterProps) {
                 href={link.href}
                 fontSize="md"
                 color={isDark ? "gray.300" : "gray.700"}
+                textAlign="center"
                 _hover={{ 
                   color: isDark ? "orange.300" : "orange.600",
                   textDecoration: "none"
@@ -171,49 +171,48 @@ function Footer({ isDark }: FooterProps) {
             textAlign="center"
             color={isDark ? "gray.400" : "gray.600"}
             fontFamily="var(--font-geist-mono)"
-
           >
             your open-source library for research.
           </Text>
           
           <HStack gap={4}>
-<IconButton
-                aria-label="GitHub"
-                variant="ghost"
-                size="sm"
-                color={isDark ? "gray.400" : "gray.600"}
-                _hover={{
-                    color: isDark ? "white" : "gray.900",
-                    bg: isDark ? "gray.700" : "gray.100",
-                }}
-                >
-                <a
-                    href="https://github.com/qilstiano/glanxiv"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ display: "flex" }} // optional for centering
-                >
-                    <LuGithub />
-                </a>
-                </IconButton>
+            <IconButton
+              aria-label="GitHub"
+              variant="ghost"
+              size="sm"
+              color={isDark ? "gray.400" : "gray.600"}
+              _hover={{
+                color: isDark ? "white" : "gray.900",
+                bg: isDark ? "gray.700" : "gray.100",
+              }}
+            >
+              <a
+                href="https://github.com/qilstiano/glanxiv"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "flex" }}
+              >
+                <LuGithub />
+              </a>
+            </IconButton>
 
-                <IconButton
-                aria-label="Contact"
-                variant="ghost"
-                size="sm"
-                color={isDark ? "gray.400" : "gray.600"}
-                _hover={{
-                    color: isDark ? "white" : "gray.900",
-                    bg: isDark ? "gray.700" : "gray.100",
-                }}
-                >
-                <a
-                    href="mailto:qilstianooo@gmail.com"
-                    style={{ display: "flex" }}
-                >
-                    <LuMail />
-                </a>
-                </IconButton>
+            <IconButton
+              aria-label="Contact"
+              variant="ghost"
+              size="sm"
+              color={isDark ? "gray.400" : "gray.600"}
+              _hover={{
+                color: isDark ? "white" : "gray.900",
+                bg: isDark ? "gray.700" : "gray.100",
+              }}
+            >
+              <a
+                href="mailto:qilstianooo@gmail.com"
+                style={{ display: "flex" }}
+              >
+                <LuMail />
+              </a>
+            </IconButton>
           </HStack>
         </VStack>
         
@@ -222,7 +221,7 @@ function Footer({ isDark }: FooterProps) {
           direction={{ base: 'column', md: 'row' }} 
           justify="space-between" 
           align="center"
-          pt={8}
+          py={6}
           borderTopWidth="1px"
           borderTopColor={isDark ? "gray.700" : "gray.200"}
           gap={4}

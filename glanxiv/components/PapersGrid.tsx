@@ -3,6 +3,7 @@ import { SimpleGrid, Center, Text, For, Box, Button, VStack } from '@chakra-ui/r
 import PaperCard from './PaperCard'
 import { Paper } from '../app/types'
 import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
 
 interface PapersGridProps {
   papers: Paper[]
@@ -52,6 +53,7 @@ export default function PapersGrid({ papers, isDark, initialVisibleCount = 6 }: 
             variant="outline"
           >
             Load More Papers
+            <ChevronDown/>
           </Button>
         </Center>
       )}

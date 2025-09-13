@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import { LuGithub, LuStar } from 'react-icons/lu';
-import './GithubButton.css'; // We'll create this CSS file
+import './GithubButton.css';
 
 interface GithubButtonProps {
   username: string;
@@ -17,10 +17,10 @@ interface GitHubRepoResponse {
 const GithubButton: React.FC<GithubButtonProps> = ({ 
   username = "qilstiano", 
   repo = "glanxiv", 
+  isDark = true
 }) => {
   const [starCount, setStarCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isDark] = useState(true);
 
   useEffect(() => {
     const fetchStarCount = async (): Promise<void> => {
@@ -48,14 +48,14 @@ const GithubButton: React.FC<GithubButtonProps> = ({
       <Box
         as="button"
         onClick={handleClick}
-        className="glow-button"
+        className={`glow-button ${isDark ? 'dark-mode' : 'light-mode'}`}
       >
         <Box className="btn-inner">
           <Box gap={2} display="flex">
-            <LuGithub size={18}/>
-            <LuStar size={18} color={ isDark ? "yellow" : "black" }/>
+            <LuGithub size={18} color={isDark ? "#645d5dff" : "#000000ff"}/>
+            <LuStar size={18} color={isDark ? "#fbbf24" : "#f59e0b"}/>
           </Box>
-          <Text ml={1} color="yellow">
+          <Text ml={1} color={isDark ? "#fbbf24" : "#f59e0b"}>
             {loading ? "..." : starCount}
           </Text>
         </Box>

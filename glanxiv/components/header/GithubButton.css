@@ -8,11 +8,9 @@
 @keyframes rotate {
   0% {
     --angle: 0deg;
-    --glowColor: #51ff00;
   }
   100% {
     --angle: 360deg;
-    --glowColor: #51ff00;
   }
 }
 
@@ -35,8 +33,9 @@
   cursor: pointer;
 }
 
-.glow-button::after, 
-.glow-button::before {
+/* Dark mode styles */
+.glow-button.dark-mode::after, 
+.glow-button.dark-mode::before {
   content: "";
   display: block;
   position: absolute;
@@ -51,7 +50,7 @@
     from var(--angle) at 50% 50%, 
     rgba(0, 0, 0, 0) 0%,
     rgba(0, 0, 0, 0) 33%,
-    var(--glowColor) 50%,
+    #51ff00 50%,
     rgba(0, 0, 0, 0) 66%,
     rgba(0, 0, 0, 0) 100%
   );
@@ -59,12 +58,12 @@
   z-index: 0;
 }
 
-.glow-button::before {
+.glow-button.dark-mode::before {
   filter: blur(12px);
   opacity: 0.7;
 }
 
-.glow-button .btn-inner {
+.glow-button.dark-mode .btn-inner {
   position: relative;
   display: flex;
   align-items: center;
@@ -80,11 +79,65 @@
   backface-visibility: hidden;
 }
 
-.glow-button:hover .btn-inner {
+.glow-button.dark-mode:hover .btn-inner {
   background: rgb(108, 228, 118);
   color: #ffffff;
 }
 
+/* Light mode styles */
+.glow-button.light-mode::after, 
+.glow-button.light-mode::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(100px + 1.5px);
+  background-size: 100% 100%;
+  background-position: 0px 0px;
+  background-image: conic-gradient(
+    from var(--angle) at 50% 50%, 
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 33%,
+    #22c55e 50%,
+    rgba(0, 0, 0, 0) 66%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  animation: rotate 2s infinite linear;
+  z-index: 0;
+}
+
+.glow-button.light-mode::before {
+  filter: blur(12px);
+  opacity: 0.8;
+}
+
+.glow-button.light-mode .btn-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 16px;
+  border-radius: 100px;
+  color: #374151;
+  font-weight: 500;
+  z-index: 1;
+  transition: all 0.18s ease;
+  background: rgba(34, 197, 94, 0.15);
+  backdrop-filter: blur(40px);
+  backface-visibility: hidden;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.glow-button.light-mode:hover .btn-inner {
+  background: rgba(34, 197, 94, 0.25);
+  color: #065f46;
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+/* Common styles */
 .glow-button:active {
   transform: scale(0.95);
 }
