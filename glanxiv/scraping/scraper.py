@@ -77,6 +77,8 @@ def fetch_in_chunks(days: int = 90, chunk_size: int = 30) -> List[Dict[str, Any]
         chunk_size: Number of days per chunk
     """
     all_papers = []
+    utc_now = datetime.now(timezone.utc)
+    os.makedirs("public/data", exist_ok=True)
     
     # Calculate number of chunks
     num_chunks = (days + chunk_size - 1) // chunk_size
@@ -90,12 +92,9 @@ def fetch_in_chunks(days: int = 90, chunk_size: int = 30) -> List[Dict[str, Any]
         start_str = start_date.strftime("%Y%m%d%H%M")
         end_str = end_date.strftime("%Y%m%d%H%M")
         
-        # Build query for this chunk
         query = f"submittedDate:[{start_str} TO {end_str}]"
-        
         logger.info(f"Fetching chunk {i+1}/{num_chunks}: {start_date} to {end_date}")
         
-        # Use the new Client API
         client = arxiv.Client()
         search = arxiv.Search(
             query=query,
@@ -104,9 +103,8 @@ def fetch_in_chunks(days: int = 90, chunk_size: int = 30) -> List[Dict[str, Any]
             sort_order=arxiv.SortOrder.Descending
         )
         
+        chunk_papers = []
         try:
-            # Use the client to get results
-            chunk_papers = []
             for result in client.results(search):
                 paper = {
                     "id": result.entry_id,
@@ -119,19 +117,49 @@ def fetch_in_chunks(days: int = 90, chunk_size: int = 30) -> List[Dict[str, Any]
                     "primary_category": result.primary_category
                 }
                 chunk_papers.append(paper)
-                
+            
             logger.info(f"Fetched {len(chunk_papers)} papers from chunk {i+1}")
             all_papers.extend(chunk_papers)
             
-            # Add delay between chunks to be respectful to the API
             if i < num_chunks - 1:
                 logger.info("Waiting 5 seconds before next chunk...")
                 time.sleep(5)
                 
         except Exception as e:
-            logger.error(f"Error fetching chunk {i+1}: {e}")
-            logger.info(f"Successfully fetched {len(chunk_papers)} papers from this chunk before error")
-    
+            # Save what we have so far
+            logger.error(f"Fatal error fetching chunk {i+1}: {e}")
+            logger.info(f"Saving {len(all_papers)} papers collected so far before waiting...")
+            
+            filename = f"public/data/{utc_now.strftime('%Y-%m-%d')}_partial.json"
+            with open(filename, "w", encoding="utf-8") as f:
+                json.dump(all_papers, f, indent=2, ensure_ascii=False)
+            
+            logger.info(f"Saved partial data to {filename}. Waiting 60 seconds before retry...")
+            time.sleep(60)  # Wait before retrying
+            logger.info("Retrying chunk after wait...")
+            
+            # Retry logic: try the same chunk again
+            try:
+                for result in client.results(search):
+                    paper = {
+                        "id": result.entry_id,
+                        "title": result.title,
+                        "authors": [author.name for author in result.authors],
+                        "abstract": result.summary,
+                        "pdf_url": result.pdf_url,
+                        "published": result.published.isoformat(),
+                        "categories": result.categories,
+                        "primary_category": result.primary_category
+                    }
+                    chunk_papers.append(paper)
+                
+                logger.info(f"Fetched {len(chunk_papers)} papers from chunk {i+1} after retry")
+                all_papers.extend(chunk_papers)
+            except Exception as retry_e:
+                logger.error(f"Second attempt failed for chunk {i+1}: {retry_e}")
+                logger.info(f"Skipping chunk {i+1} and continuing...")
+                continue
+
     return all_papers
 
 if __name__ == "__main__":
@@ -144,10 +172,10 @@ if __name__ == "__main__":
         logger.info(f"Total papers fetched: {len(papers)}")
         
         # Create data directory if it doesn't exist
-        os.makedirs("public/data", exist_ok=True)
+        os.makedirs("/data", exist_ok=True)
         
         # Save to JSON file
-        filename = f"public/data/{utc_now.strftime('%Y-%m-%d')}.json"
+        filename = f"/data/{utc_now.strftime('%Y-%m-%d')}.json"
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(papers, f, indent=2, ensure_ascii=False)
         

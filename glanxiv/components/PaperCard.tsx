@@ -385,8 +385,8 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                     aria-label={isPdfDarkMode ? "Light mode" : "Dark mode"}
                     title={isPdfDarkMode ? "Switch to light mode" : "Switch to dark mode"}
                   >
-                    {isPdfDarkMode ? <Sun size={16} color="orange"/> : <MoonStar size={16} color="blue"/>}
-                    {isPdfDarkMode ? <Text color="orange" fontFamily="var(--font-geist-mono)"> Light </Text> : <Text color="blue" fontFamily="var(--font-geist-mono)"> Dark </Text> }
+                    {isPdfDarkMode ? <Sun size={16} color="#df7b1eff"/> : <MoonStar size={16} color="#588fe2ff"/>}
+                    {isPdfDarkMode ? <Text color="#df7b1eff" fontFamily="var(--font-geist-mono)"> Light </Text> : <Text color="#588fe2ff" fontFamily="var(--font-geist-mono)"> Dark </Text> }
                   </IconButton>
                   
                   {/* Toggle summary visibility */}
