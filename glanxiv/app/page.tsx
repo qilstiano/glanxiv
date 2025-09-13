@@ -69,12 +69,40 @@ export default function Home() {
       paper.abstract.toLowerCase().includes(searchTerm.toLowerCase()) ||
       paper.authors.some(author => author.toLowerCase().includes(searchTerm.toLowerCase()))
     
-    const matchesCategory = selectedCategory === 'all' || 
-      paper.categories.includes(selectedCategory) || 
-      paper.primary_category === selectedCategory
+    // Handle multiple categories and .all variants
+    if (selectedCategory === 'all') {
+      return matchesSearch;
+    }
     
-    return matchesSearch && matchesCategory
-  })
+    // Split comma-separated categories and convert to lowercase
+    const categories = selectedCategory.split(',').map(cat => cat.trim().toLowerCase());
+    
+    const matchesCategory = categories.some(category => {
+      // Handle .all variants (e.g., cs.all should match all cs.* categories)
+      if (category.endsWith('.all')) {
+        const baseCategory = category.replace('.all', '');
+        return paper.categories.some(cat => cat.toLowerCase().startsWith(baseCategory + '.')) || 
+              paper.primary_category?.toLowerCase()?.startsWith(baseCategory + '.') ||
+              paper.categories.map(c => c.toLowerCase()).includes(baseCategory) ||
+              paper.primary_category?.toLowerCase() === baseCategory;
+      }
+      
+      // Handle main category (e.g., cs should match all cs.* subcategories)
+      const mainCategories = ['cs', 'math', 'physics', 'eess', 'econ', 'q-bio', 'q-fin', 'stat'];
+      if (mainCategories.includes(category)) {
+        return paper.categories.some(cat => cat.toLowerCase().startsWith(category + '.')) || 
+              paper.primary_category?.toLowerCase()?.startsWith(category + '.') ||
+              paper.categories.map(c => c.toLowerCase()).includes(category) ||
+              paper.primary_category?.toLowerCase() === category;
+      }
+      
+      // Regular category matching (case-insensitive)
+      return paper.categories.map(c => c.toLowerCase()).includes(category) || 
+            paper.primary_category?.toLowerCase() === category;
+    });
+    
+    return matchesSearch && matchesCategory;
+  });
 
   if (loading) {
     return <LoadingSpinner />

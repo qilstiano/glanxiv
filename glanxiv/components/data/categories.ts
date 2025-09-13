@@ -139,11 +139,20 @@ export const mainCategories = [
   }
 ];
 
+const categoriesWithAll = mainCategories.map(category => ({
+  ...category,
+  subcategories: [
+    { value: `${category.id}.all`, label: `All ${category.name}` },  // Add .all variant
+    ...category.subcategories
+  ]
+}));
+
 // Flatten all categories for search and drawer
 export const allCategories = [
   { value: 'all', label: 'All Categories' },
   ...mainCategories.flatMap(category => [
     { value: category.id, label: `All ${category.name}` },
+    { value: `${category.id}.all`, label: `All ${category.name}` },  // Add this line
     ...category.subcategories
   ])
 ];

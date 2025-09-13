@@ -12,11 +12,11 @@ import { mainCategories } from '../data/categories';
 
 interface DesktopNavProps {
   isDark: boolean;
-  selectedCategory: string;
+  selectedCategories: string[];
   onCategoryChange: (category: string) => void;
 }
 
-function DesktopNav({ isDark, selectedCategory, onCategoryChange }: DesktopNavProps) {
+function DesktopNav({ isDark, selectedCategories, onCategoryChange }: DesktopNavProps) {
   return (
     <Box 
       borderTopWidth="1px"
@@ -52,20 +52,20 @@ function DesktopNav({ isDark, selectedCategory, onCategoryChange }: DesktopNavPr
           <Button
             size="sm"
             rounded="full"
-            variant={selectedCategory === 'all' ? "solid" : "outline"}
+            variant={selectedCategories.length === 0 ? "solid" : "outline"}
             bg={
-              selectedCategory === 'all' 
+              selectedCategories.length === 0 
                 ? isDark ? "orange.600" : "orange.500" 
                 : "transparent"
             }
             borderColor={isDark ? "gray.600" : "gray.300"}
             color={
-              selectedCategory === 'all' 
+              selectedCategories.length === 0 
                 ? "white" 
                 : isDark ? "gray.300" : "gray.700"
             }
             _hover={{
-              bg: selectedCategory === 'all' 
+              bg: selectedCategories.length === 0 
                 ? isDark ? "orange.500" : "orange.600" 
                 : isDark ? "gray.700" : "gray.100"
             }}
@@ -83,8 +83,9 @@ function DesktopNav({ isDark, selectedCategory, onCategoryChange }: DesktopNavPr
                 <Button
                   size="sm"
                   rounded="full"
-                  variant="outline"
-                  color={isDark ? "gray.300" : "gray.700"}
+                  variant={selectedCategories.includes(category.id) ? "solid" : "outline"}
+                  bg={selectedCategories.includes(category.id) ? (isDark ? "orange.600" : "orange.500") : "transparent"}
+                  color={selectedCategories.includes(category.id) ? "white" : (isDark ? "gray.300" : "gray.700")}
                   _hover={{ bg: isDark ? "gray.700" : "gray.100" }}
                   fontFamily="var(--font-geist-mono)"
                   fontSize="sm"
@@ -95,21 +96,80 @@ function DesktopNav({ isDark, selectedCategory, onCategoryChange }: DesktopNavPr
               </Menu.Trigger>
               <Menu.Positioner>
                 <Menu.Content 
-                  bg={"transparent"} 
-                  borderColor={isDark ? "gray.600" : "gray.300"}
+                  bg={isDark ? "rgba(23, 25, 35, 0.95)" : "rgba(255, 255, 255, 0.95)"} 
+                  borderColor={isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)"}
+                  backdropFilter="blur(12px)"
+                  borderRadius="xl"
+                  boxShadow={isDark 
+                    ? "0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" 
+                    : "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+                  }
+                  border="1px solid"
                   maxH="400px"
                   overflowY="auto"
+                  css={{
+                    '&::-webkit-scrollbar': {
+                      width: '4px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      background: 'transparent',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      background: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+                      borderRadius: '2px',
+                    },
+                  }}
                 >
+                  {/* All subcategories option */}
+                  <Menu.Item 
+                    value={category.id}
+                    onClick={() => onCategoryChange(category.id)}
+                    bg={selectedCategories.includes(category.id) 
+                      ? isDark 
+                        ? "rgba(251, 146, 60, 0.2)" 
+                        : "rgba(251, 146, 60, 0.1)" 
+                      : "transparent"
+                    }
+                    color={isDark ? "white" : "gray.900"}
+                    fontFamily="var(--font-geist-mono)"
+                    borderRadius="lg"
+                    mx={1}
+                    my={0.5}
+                    _hover={{
+                      bg: isDark 
+                        ? "rgba(255, 255, 255, 0.1)" 
+                        : "rgba(0, 0, 0, 0.05)"
+                    }}
+                    transition="all 0.2s ease"
+                  >
+                    #{category.id} (All)
+                  </Menu.Item>
+                  
                   {category.subcategories.map((subcategory) => (
                     <Menu.Item 
                       key={subcategory.value}
                       value={subcategory.value}
                       onClick={() => onCategoryChange(subcategory.value)}
-                      bg={"transparent"}
+                      bg={selectedCategories.includes(subcategory.value) 
+                        ? isDark 
+                          ? "rgba(251, 146, 60, 0.2)" 
+                          : "rgba(251, 146, 60, 0.1)" 
+                        : "transparent"
+                      }
+                      color={isDark ? "white" : "gray.900"}
                       fontFamily="var(--font-geist-mono)"
+                      borderRadius="lg"
+                      mx={1}
+                      my={0.5}
                       pl={6}
+                      _hover={{
+                        bg: isDark 
+                          ? "rgba(255, 255, 255, 0.1)" 
+                          : "rgba(0, 0, 0, 0.05)"
+                      }}
+                      transition="all 0.2s ease"
                     >
-                      └── #{subcategory.value}
+                      #{subcategory.value}
                     </Menu.Item>
                   ))}
                 </Menu.Content>
