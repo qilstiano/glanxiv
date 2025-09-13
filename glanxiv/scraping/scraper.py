@@ -3,8 +3,8 @@ import json
 from datetime import datetime, timedelta, timezone
 import os
 
-def fetch_arxiv_papers(category="cs.CV", days=1):
-    """Fetch arXiv papers from the last N days for a given category."""
+def fetch_arxiv_papers(days=90):
+    """Fetch arXiv papers from the last N days for all categories."""
     # Calculate date range
     end_date = datetime.now()
     start_date = end_date - timedelta(days=days)
@@ -13,13 +13,13 @@ def fetch_arxiv_papers(category="cs.CV", days=1):
     start_str = start_date.strftime("%Y%m%d%H%M")
     end_str = end_date.strftime("%Y%m%d%H%M")
     
-    # Build query: category + date range
-    query = f"cat:{category} AND submittedDate:[{start_str} TO {end_str}]"
+    # Build query: date range only (no category filter)
+    query = f"submittedDate:[{start_str} TO {end_str}]"
     
     # Search arXiv
     search = arxiv.Search(
         query=query,
-        max_results=100,
+        max_results=500,  # Increased to get more papers
         sort_by=arxiv.SortCriterion.SubmittedDate,
         sort_order=arxiv.SortOrder.Descending
     )
@@ -41,11 +41,10 @@ def fetch_arxiv_papers(category="cs.CV", days=1):
     return papers
 
 if __name__ == "__main__":
-
     utc_now = datetime.now(timezone.utc)
 
-    # Fetch papers from last 7 days
-    papers = fetch_arxiv_papers(category="cs.CV", days=7)
+    # Fetch papers from last 90 days (3 months)
+    papers = fetch_arxiv_papers(days=90)
     
     # Create data directory if it doesn't exist
     os.makedirs("public/data", exist_ok=True)

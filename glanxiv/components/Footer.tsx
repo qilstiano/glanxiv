@@ -12,6 +12,7 @@ import {
   useBreakpointValue,
   VStack,
   HStack,
+  Image,
 } from '@chakra-ui/react';
 import { 
   LuGithub, 
@@ -54,7 +55,6 @@ function Footer({ isDark }: FooterProps) {
       color={isDark ? "gray.300" : "gray.800"} // Changed to gray.800 for better contrast in light mode
       borderTopWidth="1px"
       borderTopColor={isDark ? "gray.700" : "gray.200"}
-      py={12}
       px={{ base: 4, md: 8 }}
       fontFamily="var(--font-geist)"
     >
@@ -62,10 +62,10 @@ function Footer({ isDark }: FooterProps) {
         {/* Logo at the top center */}
         <Flex justify="center" mb={8}>
           <Box>
-            <img 
+            <Image 
               src="/glanxiv.png" 
               alt="Glanxiv" 
-              height={isMobile ? 36 : 48}
+              height={isMobile ? 10 : 12}
               width="auto"
             />
           </Box>

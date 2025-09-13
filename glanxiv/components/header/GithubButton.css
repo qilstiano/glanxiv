@@ -75,7 +75,7 @@
   font-weight: 500;
   z-index: 1;
   transition: all 0.18s ease;
-  background: rgba(223, 223, 223, 0.452);
+  background: rgba(137, 232, 128, 0.452);
   backdrop-filter: blur(40px);
   backface-visibility: hidden;
 }

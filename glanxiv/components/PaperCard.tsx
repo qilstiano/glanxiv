@@ -17,7 +17,7 @@ import {
   useBreakpointValue,
   IconButton,
 } from '@chakra-ui/react'
-import { ExternalLink, ChevronDown, ChevronUp, GripVertical, Eye, EyeOff, MoonStar , Sun, Moon, Expand } from 'lucide-react'
+import { ExternalLink, GripVertical, Eye, EyeOff, MoonStar, Sun, Expand } from 'lucide-react'
 import { Paper } from '../app/types'
 import { useState, useRef, useEffect } from 'react'
 
@@ -170,11 +170,6 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
     e.preventDefault();
     e.stopPropagation();
     setIsExpanded(true);
-  };
-
-  const handleExternalLinkClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering the title click
-    // Let the default link behavior happen (open PDF in new tab)
   };
 
   // Toggle summary visibility
@@ -333,7 +328,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                 _hover={{ textDecoration: 'underline' }}
               >
                 <ExternalLink size={16} />
-                <a href={paper.pdf_url}></a>arXiv
+                <a href={paper.pdf_url}>arXiv</a>
               </Button>
             </HStack>
           </VStack>
@@ -361,7 +356,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
               <DialogHeader 
                 borderBottomWidth="1px" 
                 borderColor={isDark ? "gray.700" : "gray.200"}
-                background={`linear-gradient(to right, ${gradient[0]}, ${gradient[1]}, ${gradient[2]})`}
+                background={isDark ? "black" : "white"}
                 pr={10}
                 py={3}
                 px={4}

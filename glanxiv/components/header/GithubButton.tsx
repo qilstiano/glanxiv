@@ -7,7 +7,7 @@ interface GithubButtonProps {
   username: string;
   repo: string;
   isScrolled?: boolean;
-  localIsDark?: boolean;
+  isDark?: boolean;
 }
 
 interface GitHubRepoResponse {
@@ -17,11 +17,10 @@ interface GitHubRepoResponse {
 const GithubButton: React.FC<GithubButtonProps> = ({ 
   username = "qilstiano", 
   repo = "glanxiv", 
-  isScrolled = false, 
-  localIsDark = true 
 }) => {
   const [starCount, setStarCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isDark] = useState(true);
 
   useEffect(() => {
     const fetchStarCount = async (): Promise<void> => {
@@ -54,9 +53,9 @@ const GithubButton: React.FC<GithubButtonProps> = ({
         <Box className="btn-inner">
           <Box gap={2} display="flex">
             <LuGithub size={18}/>
-            <LuStar size={18} />
+            <LuStar size={18} color={ isDark ? "yellow" : "black" }/>
           </Box>
-          <Text ml={1} color="rgba(255,255,255,0.7)">
+          <Text ml={1} color="yellow">
             {loading ? "..." : starCount}
           </Text>
         </Box>

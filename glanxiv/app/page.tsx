@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Box } from '@chakra-ui/react'
-import Header from '../components/Header'
+import Header from '../components/header/Header'
 import ErrorDisplay from '../components/ErrorDisplay'
 import PapersGrid from '../components/PapersGrid'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -18,7 +18,7 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [isDark, setIsDark] = useState(false)
+  const [isDark, setIsDark] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,6 +88,7 @@ export default function Home() {
       fontFamily="var(--font-geist)"
       transition="all 0.3s ease"
     >
+      <ErrorDisplay error={error} />
       <Header 
         isDark={isDark}
         onToggleTheme={() => setIsDark(!isDark)}
@@ -97,8 +98,6 @@ export default function Home() {
         onSearchChange={setSearchTerm}
       />
       
-      <ErrorDisplay error={error} />
-
       <Box py={8} px={{ base: 4, md: 6 }} maxW="7xl" mx="auto">
         <PapersGrid papers={filteredPapers} isDark={isDark} />
       </Box>
