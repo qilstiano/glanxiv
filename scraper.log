@@ -87,3 +87,14 @@
 2025-09-14 02:33:07,248 - INFO - Sleeping: 2.999000 seconds
 2025-09-14 02:33:10,249 - INFO - Requesting page (first: False, try: 2): https://export.arxiv.org/api/query?search_query=submittedDate%3A%5B202506160232+TO+202507160232%5D&id_list=&sortBy=submittedDate&sortOrder=descending&start=800&max_results=100
 2025-09-14 02:33:10,254 - INFO - Sleeping: 2.999006 seconds
+2025-09-14 17:20:33,636 - INFO - Starting arXiv scraper...
+2025-09-14 17:20:33,637 - INFO - Fetching chunk 1/3: 2025-08-15 to 2025-09-14
+2025-09-14 17:21:34,327 - WARNING - Empty page in chunk 1, continuing with next chunk...
+2025-09-14 17:21:34,327 - INFO - Fetching chunk 2/3: 2025-07-16 to 2025-08-15
+2025-09-14 17:22:10,054 - WARNING - Empty page in chunk 2, continuing with next chunk...
+2025-09-14 17:22:10,054 - INFO - Fetching chunk 3/3: 2025-06-16 to 2025-07-16
+2025-09-14 17:23:24,619 - INFO - Fetched 2000 papers from chunk 3
+2025-09-14 17:23:24,683 - INFO - Saved partial data to public/data/2025-09-14_partial.json
+2025-09-14 17:23:24,684 - INFO - Total papers fetched: 2000
+2025-09-14 17:23:24,747 - INFO - Saved 2000 papers to public/data/2025-09-14.json
+2025-09-14 17:23:24,748 - INFO - Removed partial file public/data/2025-09-14_partial.json
