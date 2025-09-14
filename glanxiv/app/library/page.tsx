@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Box, Spinner, Button, Center, Text } from '@chakra-ui/react'
+import { Box, Spinner, Button, Center, Text, IconButton } from '@chakra-ui/react'
 import Header from '../../components/header/Header'
 import ErrorDisplay from '../../components/ErrorDisplay'
 import PapersGrid from '../../components/PapersGrid'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { Paper } from '../types'
 import Footer from '@/components/Footer'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, ArrowUp } from 'lucide-react'
 
 export default function Library() {
   const [papers, setPapers] = useState<Paper[]>([])
@@ -22,25 +22,37 @@ export default function Library() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
   const [totalPapers, setTotalPapers] = useState(0)
+  const [showScrollTop, setShowScrollTop] = useState(false)
 
-  // Debounce search term to avoid too many API calls
+  // Debounce search term
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 500); // Increased debounce time to 500ms
-
-    return () => {
-      clearTimeout(handler);
-    };
+    }, 500);
+    return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  // Fetch papers with search and filters
+  // Show scroll-to-top button when scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Fetch papers
   const fetchPapers = useCallback(async (pageNum: number = 1, reset: boolean = false) => {
-    if (reset) {
-      setLoading(true);
-    } else {
-      setLoadingMore(true);
-    }
+    if (reset) setLoading(true);
+    else setLoadingMore(true);
 
     try {
       const params = new URLSearchParams({
@@ -51,46 +63,37 @@ export default function Library() {
       });
 
       const response = await fetch(`/api/papers/search?${params}`);
-      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
       if (reset) {
         setPapers(data.papers);
         setPage(1);
       } else {
         setPapers(prev => [...prev, ...data.papers]);
       }
-      
+
       setHasMore(data.hasMore);
       setTotalPapers(data.total);
       setError(null);
-      
     } catch (error) {
       console.error('Error fetching papers:', error);
       setError(error instanceof Error ? error.message : 'Unknown error');
-      
-      // Fallback to empty array to prevent UI breakage
-      if (reset) {
-        setPapers([]);
-      }
+      if (reset) setPapers([]);
     } finally {
       setLoading(false);
       setLoadingMore(false);
     }
   }, [debouncedSearchTerm, selectedCategory]);
 
-  // Reset and fetch when filters change
   useEffect(() => {
     setPage(1);
     fetchPapers(1, true);
   }, [debouncedSearchTerm, selectedCategory, fetchPapers]);
 
-  // Load more papers
   const loadMore = useCallback(() => {
     const nextPage = page + 1;
     setPage(nextPage);
@@ -120,7 +123,6 @@ export default function Library() {
       />
       
       <Box py={8} px={{ base: 4, md: 6 }} maxW="7xl" mx="auto">
-        {/* Results info */}
         {papers.length > 0 && (
           <Text 
             color={isDark ? "gray.400" : "gray.500"} 
@@ -135,8 +137,7 @@ export default function Library() {
         )}
 
         <PapersGrid papers={papers} isDark={isDark} />
-        
-        {/* Load more button */}
+
         {hasMore && (
           <Center mt={8}>
             <Button
@@ -151,7 +152,6 @@ export default function Library() {
           </Center>
         )}
 
-        {/* No results message */}
         {!loading && papers.length === 0 && (
           <Center py={12}>
             <Text color={isDark ? "gray.400" : "gray.500"} fontSize="lg">
@@ -161,6 +161,20 @@ export default function Library() {
         )}
       </Box>
       <Footer isDark={isDark}/>
+
+      {/* Sticky Scroll-to-Top Button */}
+      {showScrollTop && (
+        <IconButton
+          aria-label="Scroll to top"
+          onClick={scrollToTop}
+          position="fixed"
+          bottom="4"
+          right="4"
+          colorPalette="orange"
+          borderRadius="full"
+          size="md"
+        ><ArrowUp /></IconButton>
+      )}
     </Box>
   )
 }

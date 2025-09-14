@@ -7,9 +7,13 @@ import {
   IconButton,
   HStack,
   Tag,
+  Box,
+  Text,
+  Kbd,
 } from '@chakra-ui/react';
-import { LuSearch } from "react-icons/lu";
+import { LuSearch, LuInfo } from "react-icons/lu";
 import { mainCategories } from '../data/categories';
+import { CrossIcon } from 'lucide-react';
 
 interface SearchBarProps {
   isDark: boolean;
@@ -140,6 +144,73 @@ function SearchBar({
       >
         <LuSearch />
       </IconButton>
+      
+      {/* Info icon with tooltip */}
+      <Box
+        position="absolute"
+        right={isMobile ? 8 : 10}
+        color={isDark ? "gray.500" : "gray.400"}
+        _hover={{ color: isDark ? "gray.300" : "gray.600" }}
+        cursor="help"
+        className="search-info-tooltip"
+        css={{
+          '&:hover + .search-tooltip-content': {
+            display: 'block',
+          },
+        }}
+      >
+        <LuInfo size={isMobile ? 14 : 16} />
+      </Box>
+      
+      {/* Tooltip content */}
+      <Box
+        className="search-tooltip-content"
+        display="none"
+        position="absolute"
+        top="100%"
+        right={0}
+        mt={2}
+        width="280px"
+        bg={isDark ? "gray.700" : "white"}
+        borderWidth="1px"
+        borderColor={isDark ? "gray.600" : "gray.200"}
+        borderRadius="md"
+        boxShadow="md"
+        p={3}
+        zIndex={10}
+        css={{
+          '.search-info-tooltip:hover + &': {
+            display: 'block',
+          },
+          '&:hover': {
+            display: 'block',
+          },
+        }}
+      >
+        <Text fontSize="sm" fontWeight="medium" mb={2}>
+          Search Tips
+        </Text>
+
+        <Text fontSize="xs" mb={1}>
+          • Use # to filter by categories (e.g., #physics) and press <Kbd>Enter</Kbd>
+        </Text>
+
+        <Text fontSize="xs" mb={1}>
+          • Alternatively, use the selectors below to filter
+        </Text>
+
+        <Text fontSize="xs" mb={1}>
+          • Press <Kbd>Backspace</Kbd> to remove categories or use the <Kbd>x</Kbd>
+        </Text>
+
+        <Text fontSize="xs" mb={1}>
+          • Press <Kbd>Enter</Kbd> to search
+        </Text>
+
+        <Text fontSize="xs">
+          • Combine categories with keywords for precise results
+        </Text>
+      </Box>
     </Flex>
   );
 }
