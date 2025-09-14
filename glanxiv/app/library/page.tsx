@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { Box } from '@chakra-ui/react'
+import { Box, Spinner } from '@chakra-ui/react'
 import Header from '../../components/header/Header'
 import ErrorDisplay from '../../components/ErrorDisplay'
 import PapersGrid from '../../components/PapersGrid'
@@ -27,9 +27,16 @@ const preprocessPaper = (paper: Paper) => ({
 // Cache for processed papers
 let processedPapersCache: ReturnType<typeof preprocessPaper>[] = [];
 
+// Batch size configuration
+const BATCH_SIZE = 1000;
+const BATCH_DELAY_MS = 100; // Delay between batches in milliseconds
+
 export default function Library() {
   const [papers, setPapers] = useState<Paper[]>([])
+  const [allPapers, setAllPapers] = useState<Paper[]>([]) // Store all fetched papers
   const [loading, setLoading] = useState(true)
+  const [batchLoading, setBatchLoading] = useState(false)
+  const [loadedCount, setLoadedCount] = useState(0)
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -55,24 +62,55 @@ export default function Library() {
           primary_category: paper.primary_category || ''
         }));
 
-        setPapers(validatedData);
+        setAllPapers(validatedData);
         setError(null);
         
-        // Preprocess and cache papers for search
+        // Preprocess and cache all papers for search
         processedPapersCache = validatedData.map(preprocessPaper);
+        
+        // Start batch loading
+        setBatchLoading(true);
         
       } catch (error) {
         console.error('Error fetching papers:', error);
         setError(error instanceof Error ? error.message : 'Unknown error');
+        setAllPapers(sampleData);
         setPapers(sampleData);
         processedPapersCache = sampleData.map(preprocessPaper);
-      } finally {
         setLoading(false);
       }
     };
 
     fetchData();
   }, []);
+
+  // Batch loading effect
+  useEffect(() => {
+    if (!batchLoading || allPapers.length === 0) return;
+
+    const loadNextBatch = () => {
+      const nextBatchEnd = Math.min(loadedCount + BATCH_SIZE, allPapers.length);
+      const nextBatch = allPapers.slice(loadedCount, nextBatchEnd);
+      
+      setPapers(prev => [...prev, ...nextBatch]);
+      setLoadedCount(nextBatchEnd);
+
+      if (nextBatchEnd >= allPapers.length) {
+        setBatchLoading(false);
+        setLoading(false);
+      }
+    };
+
+    // Load first batch immediately
+    if (loadedCount === 0) {
+      loadNextBatch();
+      return;
+    }
+
+    // Load subsequent batches with delay
+    const timer = setTimeout(loadNextBatch, BATCH_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [batchLoading, allPapers, loadedCount]);
 
   // Memoized search function
   const matchesSearch = useCallback((paper: ReturnType<typeof preprocessPaper>, term: string): boolean => {
@@ -133,24 +171,17 @@ export default function Library() {
     const shouldFilterBySearch = searchTermLower.length > 0;
     const shouldFilterByCategory = selectedCategory !== 'all';
     
-    // If no filters, return all papers
+    // If no filters, return currently loaded papers
     if (!shouldFilterBySearch && !shouldFilterByCategory) {
-      return processedPapersCache.map(paper => ({
-        id: paper.id,
-        title: paper.title,
-        authors: paper.authors,
-        abstract: paper.abstract,
-        pdf_url: paper.pdf_url,
-        published: paper.published,
-        categories: paper.categories,
-        primary_category: paper.primary_category
-      }));
+      return papers;
     }
     
     const results: Paper[] = [];
     
-    // Optimized filtering with early exits
-    for (const paper of processedPapersCache) {
+    // Optimized filtering with early exits - only search through loaded papers
+    const loadedProcessedPapers = processedPapersCache.slice(0, loadedCount);
+    
+    for (const paper of loadedProcessedPapers) {
       let include = true;
       
       // Apply search filter first (more selective)
@@ -178,7 +209,7 @@ export default function Library() {
     }
     
     return results;
-  }, [papers, searchTerm, selectedCategory, matchesSearch, matchesCategory]);
+  }, [papers, searchTerm, selectedCategory, matchesSearch, matchesCategory, loadedCount]);
 
   // Debounced search to avoid too many re-renders
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
@@ -193,7 +224,8 @@ export default function Library() {
     };
   }, [searchTerm]);
 
-  if (loading) {
+  // Show loading spinner only during initial fetch, not during batch loading
+  if (loading && loadedCount === 0) {
     return <LoadingSpinner />
   }
 
@@ -216,6 +248,24 @@ export default function Library() {
       />
       
       <Box py={8} px={{ base: 4, md: 6 }} maxW="7xl" mx="auto">
+        {/* Show batch loading progress if still loading */}
+        {batchLoading && (
+          <Box 
+            position="sticky" 
+            top={0} 
+            zIndex={10} 
+            bg={isDark ? "gray.800" : "white"} 
+            p={2} 
+            mb={4}
+            borderRadius="md"
+            textAlign="center"
+            fontSize="sm"
+            color={isDark ? "gray.300" : "gray.600"}
+          >
+            Loading papers... {loadedCount} / {allPapers.length}
+            <Spinner/>
+          </Box>
+        )}
         <PapersGrid papers={filteredPapers} isDark={isDark} />
       </Box>
       <Footer isDark={isDark}/>
