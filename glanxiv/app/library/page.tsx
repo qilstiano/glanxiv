@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Box } from '@chakra-ui/react'
 import Header from '../../components/header/Header'
 import ErrorDisplay from '../../components/ErrorDisplay'
@@ -12,7 +12,22 @@ import Footer from '@/components/Footer'
 // Sample data fallback
 const sampleData: Paper[] = []
 
-export default function Home() {
+// Precompute lowercase versions and search indexes
+const preprocessPaper = (paper: Paper) => ({
+  ...paper,
+  _searchData: {
+    titleLower: paper.title.toLowerCase(),
+    abstractLower: paper.abstract.toLowerCase(),
+    authorsLower: paper.authors.map(author => author.toLowerCase()),
+    categoriesLower: paper.categories.map(cat => cat.toLowerCase()),
+    primaryCategoryLower: paper.primary_category?.toLowerCase() || ''
+  }
+});
+
+// Cache for processed papers
+let processedPapersCache: ReturnType<typeof preprocessPaper>[] = [];
+
+export default function Library() {
   const [papers, setPapers] = useState<Paper[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
@@ -23,86 +38,160 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const today = new Date().toISOString().split('T')[0]
-        console.log(`Fetching data for: ${today}`)
+        const response = await fetch('/api/papers');
+        if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
         
-        const response = await fetch(`data/${today}.json`)
+        const data: Paper[] = await response.json();
+        console.log('Fetched papers:', data.length);
+
+        const validatedData = data.map((paper: Paper) => ({
+          id: paper.id || '',
+          title: paper.title || '',
+          authors: paper.authors || [],
+          abstract: paper.abstract || '',
+          pdf_url: paper.pdf_url || '',
+          published: paper.published || '',
+          categories: paper.categories || [],
+          primary_category: paper.primary_category || ''
+        }));
+
+        setPapers(validatedData);
+        setError(null);
         
-        if (response.ok) {
-          const data = await response.json()
-          console.log('Data fetched successfully:', data.length, 'papers')
-          
-          const validatedData = data.map((paper: Paper) => ({
-            id: paper.id || '',
-            title: paper.title || '',
-            authors: paper.authors || [],
-            abstract: paper.abstract || '',
-            pdf_url: paper.pdf_url || '',
-            published: paper.published || '',
-            categories: paper.categories || [],
-            primary_category: paper.primary_category || ''
-          }))
-          
-          setPapers(validatedData)
-          setError(null)
-        } else {
-          console.error('Failed to fetch data:', response.status, response.statusText)
-          setError(`Failed to load data: ${response.status} ${response.statusText}`)
-          setPapers(sampleData)
-        }
+        // Preprocess and cache papers for search
+        processedPapersCache = validatedData.map(preprocessPaper);
+        
       } catch (error) {
-        console.error('Error fetching data:', error)
-        setError(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
-        setPapers(sampleData)
+        console.error('Error fetching papers:', error);
+        setError(error instanceof Error ? error.message : 'Unknown error');
+        setPapers(sampleData);
+        processedPapersCache = sampleData.map(preprocessPaper);
       } finally {
-        setLoading(false)
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Memoized search function
+  const matchesSearch = useCallback((paper: ReturnType<typeof preprocessPaper>, term: string): boolean => {
+    if (!term) return true;
+    
+    const termLower = term.toLowerCase();
+    
+    // Check title first (most common search)
+    if (paper._searchData.titleLower.includes(termLower)) {
+      return true;
+    }
+    
+    // Check authors
+    for (const author of paper._searchData.authorsLower) {
+      if (author.includes(termLower)) {
+        return true;
       }
     }
+    
+    // Check abstract last (most expensive)
+    return paper._searchData.abstractLower.includes(termLower);
+  }, []);
 
-    fetchData()
-  }, [])
-
-  // Filter papers based on search term and selected category
-  const filteredPapers = papers.filter(paper => {
-    const matchesSearch = 
-      paper.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      paper.abstract.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      paper.authors.some(author => author.toLowerCase().includes(searchTerm.toLowerCase()))
+  // Memoized category matching function
+  const matchesCategory = useCallback((paper: ReturnType<typeof preprocessPaper>, category: string): boolean => {
+    if (category === 'all') return true;
     
-    // Handle multiple categories and .all variants
-    if (selectedCategory === 'all') {
-      return matchesSearch;
-    }
+    const categories = category.split(',').map(cat => cat.trim().toLowerCase());
     
-    // Split comma-separated categories and convert to lowercase
-    const categories = selectedCategory.split(',').map(cat => cat.trim().toLowerCase());
-    
-    const matchesCategory = categories.some(category => {
-      // Handle .all variants (e.g., cs.all should match all cs.* categories)
-      if (category.endsWith('.all')) {
-        const baseCategory = category.replace('.all', '');
-        return paper.categories.some(cat => cat.toLowerCase().startsWith(baseCategory + '.')) || 
-              paper.primary_category?.toLowerCase()?.startsWith(baseCategory + '.') ||
-              paper.categories.map(c => c.toLowerCase()).includes(baseCategory) ||
-              paper.primary_category?.toLowerCase() === baseCategory;
+    return categories.some(cat => {
+      // Handle .all variants
+      if (cat.endsWith('.all')) {
+        const baseCategory = cat.replace('.all', '');
+        return paper._searchData.categoriesLower.some(category => 
+          category.startsWith(baseCategory + '.')
+        ) || paper._searchData.primaryCategoryLower.startsWith(baseCategory + '.');
       }
       
-      // Handle main category (e.g., cs should match all cs.* subcategories)
+      // Handle main categories
       const mainCategories = ['cs', 'math', 'physics', 'eess', 'econ', 'q-bio', 'q-fin', 'stat'];
-      if (mainCategories.includes(category)) {
-        return paper.categories.some(cat => cat.toLowerCase().startsWith(category + '.')) || 
-              paper.primary_category?.toLowerCase()?.startsWith(category + '.') ||
-              paper.categories.map(c => c.toLowerCase()).includes(category) ||
-              paper.primary_category?.toLowerCase() === category;
+      if (mainCategories.includes(cat)) {
+        return paper._searchData.categoriesLower.some(category => 
+          category.startsWith(cat + '.')
+        ) || paper._searchData.primaryCategoryLower.startsWith(cat + '.');
       }
       
-      // Regular category matching (case-insensitive)
-      return paper.categories.map(c => c.toLowerCase()).includes(category) || 
-            paper.primary_category?.toLowerCase() === category;
+      // Exact match
+      return paper._searchData.categoriesLower.includes(cat) || 
+             paper._searchData.primaryCategoryLower === cat;
     });
+  }, []);
+
+  // Memoized filtered papers with optimized search
+  const filteredPapers = useMemo(() => {
+    if (!processedPapersCache.length) return [];
     
-    return matchesSearch && matchesCategory;
-  });
+    const searchTermLower = searchTerm.toLowerCase();
+    const shouldFilterBySearch = searchTermLower.length > 0;
+    const shouldFilterByCategory = selectedCategory !== 'all';
+    
+    // If no filters, return all papers
+    if (!shouldFilterBySearch && !shouldFilterByCategory) {
+      return processedPapersCache.map(paper => ({
+        id: paper.id,
+        title: paper.title,
+        authors: paper.authors,
+        abstract: paper.abstract,
+        pdf_url: paper.pdf_url,
+        published: paper.published,
+        categories: paper.categories,
+        primary_category: paper.primary_category
+      }));
+    }
+    
+    const results: Paper[] = [];
+    
+    // Optimized filtering with early exits
+    for (const paper of processedPapersCache) {
+      let include = true;
+      
+      // Apply search filter first (more selective)
+      if (shouldFilterBySearch && !matchesSearch(paper, searchTermLower)) {
+        include = false;
+      }
+      
+      // Then apply category filter
+      if (include && shouldFilterByCategory && !matchesCategory(paper, selectedCategory)) {
+        include = false;
+      }
+      
+      if (include) {
+        results.push({
+          id: paper.id,
+          title: paper.title,
+          authors: paper.authors,
+          abstract: paper.abstract,
+          pdf_url: paper.pdf_url,
+          published: paper.published,
+          categories: paper.categories,
+          primary_category: paper.primary_category
+        });
+      }
+    }
+    
+    return results;
+  }, [papers, searchTerm, selectedCategory, matchesSearch, matchesCategory]);
+
+  // Debounced search to avoid too many re-renders
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+  
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300); // 300ms debounce
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
 
   if (loading) {
     return <LoadingSpinner />

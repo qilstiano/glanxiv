@@ -98,3 +98,386 @@
 2025-09-14 17:23:24,684 - INFO - Total papers fetched: 2000
 2025-09-14 17:23:24,747 - INFO - Saved 2000 papers to public/data/2025-09-14.json
 2025-09-14 17:23:24,748 - INFO - Removed partial file public/data/2025-09-14_partial.json
+2025-09-14 17:30:21,428 - INFO - Starting arXiv scraper...
+2025-09-14 17:30:21,428 - INFO - Fetching chunk 1/3: 2025-08-15 to 2025-09-14
+2025-09-14 17:31:10,473 - WARNING - Empty page in chunk 1, continuing with next chunk...
+2025-09-14 17:31:10,474 - INFO - Fetching chunk 2/3: 2025-07-16 to 2025-08-15
+2025-09-14 17:32:08,686 - WARNING - Empty page in chunk 2, continuing with next chunk...
+2025-09-14 17:32:08,687 - INFO - Fetching chunk 3/3: 2025-06-16 to 2025-07-16
+2025-09-14 17:32:26,449 - WARNING - Empty page in chunk 3, continuing with next chunk...
+2025-09-14 17:32:26,451 - INFO - Total papers fetched: 0
+2025-09-14 17:32:26,452 - INFO - Saved 0 papers to public/data/2025-09-14.json
+2025-09-14 17:38:04,571 - INFO - Starting arXiv scraper...
+2025-09-14 17:38:04,572 - INFO - Fetching chunk 1/3: 2025-08-15 to 2025-09-14
+2025-09-14 17:38:28,857 - WARNING - Empty page in chunk 1, continuing with next chunk...
+2025-09-14 17:38:28,857 - INFO - Fetching chunk 2/3: 2025-07-16 to 2025-08-15
+2025-09-14 17:39:11,861 - WARNING - Empty page in chunk 2, continuing with next chunk...
+2025-09-14 17:39:11,862 - INFO - Fetching chunk 3/3: 2025-06-16 to 2025-07-16
+2025-09-14 17:40:10,829 - WARNING - Empty page in chunk 3, continuing with next chunk...
+2025-09-14 17:40:10,832 - INFO - Total papers fetched: 0
+2025-09-14 17:40:10,833 - INFO - Saved 0 papers to public/data/2025-09-14.json
+2025-09-14 17:40:38,169 - INFO - Starting arXiv scraper...
+2025-09-14 17:40:38,170 - INFO - Fetching chunk 1/3: 2025-08-15 to 2025-09-14
+2025-09-14 17:41:16,877 - WARNING - Empty page in chunk 1, continuing with next chunk...
+2025-09-14 17:41:16,878 - INFO - Fetching chunk 2/3: 2025-07-16 to 2025-08-15
+2025-09-14 17:42:05,804 - INFO - Starting arXiv scraper...
+2025-09-14 17:42:05,804 - INFO - Fetching chunk 1/3: 2025-08-15 to 2025-09-14
+2025-09-14 17:42:33,698 - WARNING - Empty page in chunk 1, continuing with next chunk...
+2025-09-14 17:42:33,699 - INFO - Saved partial data to public/data/2025-09-14_partial.json
+2025-09-14 17:42:33,700 - INFO - Fetching chunk 2/3: 2025-07-16 to 2025-08-15
+2025-09-14 17:43:28,203 - WARNING - Empty page in chunk 2, continuing with next chunk...
+2025-09-14 17:43:28,204 - INFO - Saved partial data to public/data/2025-09-14_partial.json
+2025-09-14 17:43:28,205 - INFO - Fetching chunk 3/3: 2025-06-16 to 2025-07-16
+2025-09-14 17:50:02,653 - INFO - Starting arXiv scraper...
+2025-09-14 17:50:02,654 - INFO - Fetching papers for 2025-09-14
+2025-09-14 17:50:03,345 - INFO - Fetched 0 papers for 2025-09-14
+2025-09-14 17:50:03,346 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:50:06,348 - INFO - Fetching papers for 2025-09-13
+2025-09-14 17:50:07,013 - INFO - Fetched 0 papers for 2025-09-13
+2025-09-14 17:50:07,015 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:50:10,015 - INFO - Fetching papers for 2025-09-12
+2025-09-14 17:50:10,701 - INFO - Fetched 0 papers for 2025-09-12
+2025-09-14 17:50:10,702 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:50:13,703 - INFO - Fetching papers for 2025-09-11
+2025-09-14 17:50:36,402 - INFO - Fetched 619 papers for 2025-09-11
+2025-09-14 17:50:36,424 - INFO - Saved data to public/data/daily/2025-09-14/2025-09-11.json
+2025-09-14 17:50:36,424 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:50:39,425 - INFO - Fetching papers for 2025-09-10
+2025-09-14 17:51:09,599 - INFO - Fetched 825 papers for 2025-09-10
+2025-09-14 17:51:09,626 - INFO - Saved data to public/data/daily/2025-09-14/2025-09-10.json
+2025-09-14 17:51:09,626 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:51:12,627 - INFO - Fetching papers for 2025-09-09
+2025-09-14 17:51:43,034 - INFO - Fetched 871 papers for 2025-09-09
+2025-09-14 17:51:43,065 - INFO - Saved data to public/data/daily/2025-09-14/2025-09-09.json
+2025-09-14 17:51:43,065 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:51:46,066 - INFO - Fetching papers for 2025-09-08
+2025-09-14 17:52:20,121 - INFO - Fetched 990 papers for 2025-09-08
+2025-09-14 17:52:20,157 - INFO - Saved data to public/data/daily/2025-09-14/2025-09-08.json
+2025-09-14 17:52:20,157 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:52:23,158 - INFO - Fetching papers for 2025-09-07
+2025-09-14 17:52:43,829 - WARNING - Empty page for 2025-09-07, skipping...
+2025-09-14 17:52:43,832 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:52:46,833 - INFO - Fetching papers for 2025-09-06
+2025-09-14 17:52:58,633 - INFO - Fetched 342 papers for 2025-09-06
+2025-09-14 17:52:58,646 - INFO - Saved data to public/data/daily/2025-09-14/2025-09-06.json
+2025-09-14 17:52:58,646 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:53:01,647 - INFO - Fetching papers for 2025-09-05
+2025-09-14 17:53:28,253 - INFO - Fetched 751 papers for 2025-09-05
+2025-09-14 17:53:28,278 - INFO - Saved data to public/data/daily/2025-09-14/2025-09-05.json
+2025-09-14 17:53:28,278 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:53:31,279 - INFO - Fetching papers for 2025-09-04
+2025-09-14 17:54:01,573 - INFO - Fetched 885 papers for 2025-09-04
+2025-09-14 17:54:01,601 - INFO - Saved data to public/data/daily/2025-09-14/2025-09-04.json
+2025-09-14 17:54:01,601 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:54:04,602 - INFO - Fetching papers for 2025-09-03
+2025-09-14 17:54:35,020 - INFO - Fetched 872 papers for 2025-09-03
+2025-09-14 17:54:35,048 - INFO - Saved data to public/data/daily/2025-09-14/2025-09-03.json
+2025-09-14 17:54:35,048 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:54:38,049 - INFO - Fetching papers for 2025-09-02
+2025-09-14 17:55:12,356 - INFO - Fetched 1000 papers for 2025-09-02
+2025-09-14 17:55:12,389 - INFO - Saved data to public/data/daily/2025-09-14/2025-09-02.json
+2025-09-14 17:55:12,390 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:55:15,391 - INFO - Fetching papers for 2025-09-01
+2025-09-14 17:55:45,717 - INFO - Fetched 868 papers for 2025-09-01
+2025-09-14 17:55:45,745 - INFO - Saved data to public/data/daily/2025-09-14/2025-09-01.json
+2025-09-14 17:55:45,745 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:55:48,746 - INFO - Fetching papers for 2025-08-31
+2025-09-14 17:56:04,278 - INFO - Fetched 413 papers for 2025-08-31
+2025-09-14 17:56:04,293 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-31.json
+2025-09-14 17:56:04,293 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:56:07,293 - INFO - Fetching papers for 2025-08-30
+2025-09-14 17:56:19,379 - INFO - Fetched 381 papers for 2025-08-30
+2025-09-14 17:56:19,392 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-30.json
+2025-09-14 17:56:19,392 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:56:22,393 - INFO - Fetching papers for 2025-08-29
+2025-09-14 17:56:49,133 - INFO - Fetched 760 papers for 2025-08-29
+2025-09-14 17:56:49,157 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-29.json
+2025-09-14 17:56:49,158 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:56:52,159 - INFO - Fetching papers for 2025-08-28
+2025-09-14 17:57:26,501 - INFO - Fetched 958 papers for 2025-08-28
+2025-09-14 17:57:26,535 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-28.json
+2025-09-14 17:57:26,535 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:57:29,536 - INFO - Fetching papers for 2025-08-27
+2025-09-14 17:57:59,901 - INFO - Fetched 847 papers for 2025-08-27
+2025-09-14 17:57:59,929 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-27.json
+2025-09-14 17:57:59,929 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:58:02,930 - INFO - Fetching papers for 2025-08-26
+2025-09-14 17:58:37,155 - INFO - Fetched 909 papers for 2025-08-26
+2025-09-14 17:58:37,196 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-26.json
+2025-09-14 17:58:37,196 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:58:40,198 - INFO - Fetching papers for 2025-08-25
+2025-09-14 17:59:14,671 - INFO - Fetched 982 papers for 2025-08-25
+2025-09-14 17:59:14,710 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-25.json
+2025-09-14 17:59:14,710 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:59:17,712 - INFO - Fetching papers for 2025-08-24
+2025-09-14 17:59:33,369 - INFO - Fetched 420 papers for 2025-08-24
+2025-09-14 17:59:33,386 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-24.json
+2025-09-14 17:59:33,386 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:59:36,387 - INFO - Fetching papers for 2025-08-23
+2025-09-14 17:59:48,446 - INFO - Fetched 351 papers for 2025-08-23
+2025-09-14 17:59:48,460 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-23.json
+2025-09-14 17:59:48,461 - INFO - Waiting 3 seconds before next day...
+2025-09-14 17:59:51,462 - INFO - Fetching papers for 2025-08-22
+2025-09-14 18:00:18,538 - INFO - Fetched 754 papers for 2025-08-22
+2025-09-14 18:00:18,567 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-22.json
+2025-09-14 18:00:18,567 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:00:21,568 - INFO - Fetching papers for 2025-08-21
+2025-09-14 18:00:52,173 - INFO - Fetched 832 papers for 2025-08-21
+2025-09-14 18:00:52,207 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-21.json
+2025-09-14 18:00:52,207 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:00:55,209 - INFO - Fetching papers for 2025-08-20
+2025-09-14 18:01:25,756 - INFO - Fetched 837 papers for 2025-08-20
+2025-09-14 18:01:25,795 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-20.json
+2025-09-14 18:01:25,796 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:01:28,797 - INFO - Fetching papers for 2025-08-19
+2025-09-14 18:01:59,356 - INFO - Fetched 874 papers for 2025-08-19
+2025-09-14 18:01:59,386 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-19.json
+2025-09-14 18:01:59,386 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:02:02,387 - INFO - Fetching papers for 2025-08-18
+2025-09-14 18:02:32,964 - INFO - Fetched 846 papers for 2025-08-18
+2025-09-14 18:02:32,995 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-18.json
+2025-09-14 18:02:32,996 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:02:35,997 - INFO - Fetching papers for 2025-08-17
+2025-09-14 18:02:48,258 - INFO - Fetched 392 papers for 2025-08-17
+2025-09-14 18:02:48,272 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-17.json
+2025-09-14 18:02:48,272 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:02:51,273 - INFO - Fetching papers for 2025-08-16
+2025-09-14 18:03:03,349 - INFO - Fetched 376 papers for 2025-08-16
+2025-09-14 18:03:03,362 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-16.json
+2025-09-14 18:03:03,363 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:03:06,364 - INFO - Fetching papers for 2025-08-15
+2025-09-14 18:03:29,408 - INFO - Fetched 671 papers for 2025-08-15
+2025-09-14 18:03:29,431 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-15.json
+2025-09-14 18:03:29,431 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:03:32,432 - INFO - Fetching papers for 2025-08-14
+2025-09-14 18:04:02,838 - INFO - Fetched 876 papers for 2025-08-14
+2025-09-14 18:04:02,866 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-14.json
+2025-09-14 18:04:02,867 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:04:05,868 - INFO - Fetching papers for 2025-08-13
+2025-09-14 18:04:36,386 - INFO - Fetched 836 papers for 2025-08-13
+2025-09-14 18:04:36,412 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-13.json
+2025-09-14 18:04:36,413 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:04:39,414 - INFO - Fetching papers for 2025-08-12
+2025-09-14 18:05:10,227 - INFO - Fetched 860 papers for 2025-08-12
+2025-09-14 18:05:10,255 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-12.json
+2025-09-14 18:05:10,255 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:05:13,256 - INFO - Fetching papers for 2025-08-11
+2025-09-14 18:05:47,799 - INFO - Fetched 975 papers for 2025-08-11
+2025-09-14 18:05:47,837 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-11.json
+2025-09-14 18:05:47,837 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:05:50,839 - INFO - Fetching papers for 2025-08-10
+2025-09-14 18:06:06,583 - INFO - Fetched 425 papers for 2025-08-10
+2025-09-14 18:06:06,598 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-10.json
+2025-09-14 18:06:06,598 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:06:09,600 - INFO - Fetching papers for 2025-08-09
+2025-09-14 18:06:25,153 - INFO - Fetched 405 papers for 2025-08-09
+2025-09-14 18:06:25,169 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-09.json
+2025-09-14 18:06:25,169 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:06:28,171 - INFO - Fetching papers for 2025-08-08
+2025-09-14 18:06:58,580 - INFO - Fetched 808 papers for 2025-08-08
+2025-09-14 18:06:58,613 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-08.json
+2025-09-14 18:06:58,613 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:07:01,614 - INFO - Fetching papers for 2025-08-07
+2025-09-14 18:07:36,237 - INFO - Fetched 968 papers for 2025-08-07
+2025-09-14 18:07:36,270 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-07.json
+2025-09-14 18:07:36,271 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:07:39,272 - INFO - Fetching papers for 2025-08-06
+2025-09-14 18:08:07,620 - WARNING - Empty page for 2025-08-06, skipping...
+2025-09-14 18:08:07,622 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:08:10,624 - INFO - Fetching papers for 2025-08-05
+2025-09-14 18:08:45,595 - INFO - Fetched 1000 papers for 2025-08-05
+2025-09-14 18:08:45,628 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-05.json
+2025-09-14 18:08:45,629 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:08:48,631 - INFO - Fetching papers for 2025-08-04
+2025-09-14 18:09:23,643 - INFO - Fetched 957 papers for 2025-08-04
+2025-09-14 18:09:23,676 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-04.json
+2025-09-14 18:09:23,676 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:09:26,677 - INFO - Fetching papers for 2025-08-03
+2025-09-14 18:09:42,738 - INFO - Fetched 460 papers for 2025-08-03
+2025-09-14 18:09:42,755 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-03.json
+2025-09-14 18:09:42,755 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:09:45,756 - INFO - Fetching papers for 2025-08-02
+2025-09-14 18:10:01,798 - INFO - Fetched 439 papers for 2025-08-02
+2025-09-14 18:10:01,816 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-02.json
+2025-09-14 18:10:01,816 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:10:04,816 - INFO - Fetching papers for 2025-08-01
+2025-09-14 18:10:35,870 - INFO - Fetched 823 papers for 2025-08-01
+2025-09-14 18:10:35,900 - INFO - Saved data to public/data/daily/2025-09-14/2025-08-01.json
+2025-09-14 18:10:35,901 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:10:38,901 - INFO - Fetching papers for 2025-07-31
+2025-09-14 18:10:52,486 - WARNING - Empty page for 2025-07-31, skipping...
+2025-09-14 18:10:52,488 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:10:55,489 - INFO - Fetching papers for 2025-07-30
+2025-09-14 18:11:26,990 - INFO - Fetched 859 papers for 2025-07-30
+2025-09-14 18:11:27,020 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-30.json
+2025-09-14 18:11:27,021 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:11:30,022 - INFO - Fetching papers for 2025-07-29
+2025-09-14 18:12:04,652 - INFO - Fetched 922 papers for 2025-07-29
+2025-09-14 18:12:04,682 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-29.json
+2025-09-14 18:12:04,683 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:12:07,683 - INFO - Fetching papers for 2025-07-28
+2025-09-14 18:12:38,678 - INFO - Fetched 836 papers for 2025-07-28
+2025-09-14 18:12:38,708 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-28.json
+2025-09-14 18:12:38,708 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:12:41,709 - INFO - Fetching papers for 2025-07-27
+2025-09-14 18:12:54,011 - INFO - Fetched 390 papers for 2025-07-27
+2025-09-14 18:12:54,026 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-27.json
+2025-09-14 18:12:54,026 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:12:57,027 - INFO - Fetching papers for 2025-07-26
+2025-09-14 18:13:18,052 - WARNING - Empty page for 2025-07-26, skipping...
+2025-09-14 18:13:18,054 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:13:21,055 - INFO - Fetching papers for 2025-07-25
+2025-09-14 18:13:51,885 - INFO - Fetched 843 papers for 2025-07-25
+2025-09-14 18:13:51,913 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-25.json
+2025-09-14 18:13:51,914 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:13:54,916 - INFO - Fetching papers for 2025-07-24
+2025-09-14 18:14:26,550 - INFO - Fetched 866 papers for 2025-07-24
+2025-09-14 18:14:26,583 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-24.json
+2025-09-14 18:14:26,583 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:14:29,584 - INFO - Fetching papers for 2025-07-23
+2025-09-14 18:15:04,397 - INFO - Fetched 918 papers for 2025-07-23
+2025-09-14 18:15:04,437 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-23.json
+2025-09-14 18:15:04,437 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:15:07,439 - INFO - Fetching papers for 2025-07-22
+2025-09-14 18:15:42,183 - INFO - Fetched 971 papers for 2025-07-22
+2025-09-14 18:15:42,217 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-22.json
+2025-09-14 18:15:42,218 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:15:45,218 - INFO - Fetching papers for 2025-07-21
+2025-09-14 18:16:20,465 - INFO - Fetched 964 papers for 2025-07-21
+2025-09-14 18:16:20,505 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-21.json
+2025-09-14 18:16:20,505 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:16:23,505 - INFO - Fetching papers for 2025-07-20
+2025-09-14 18:16:39,411 - INFO - Fetched 421 papers for 2025-07-20
+2025-09-14 18:16:39,429 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-20.json
+2025-09-14 18:16:39,430 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:16:42,431 - INFO - Fetching papers for 2025-07-19
+2025-09-14 18:16:54,935 - INFO - Fetched 385 papers for 2025-07-19
+2025-09-14 18:16:54,951 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-19.json
+2025-09-14 18:16:54,951 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:16:57,953 - INFO - Fetching papers for 2025-07-18
+2025-09-14 18:17:26,250 - INFO - Fetched 761 papers for 2025-07-18
+2025-09-14 18:17:26,278 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-18.json
+2025-09-14 18:17:26,278 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:17:29,279 - INFO - Fetching papers for 2025-07-17
+2025-09-14 18:18:00,669 - INFO - Fetched 882 papers for 2025-07-17
+2025-09-14 18:18:00,701 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-17.json
+2025-09-14 18:18:00,701 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:18:03,702 - INFO - Fetching papers for 2025-07-16
+2025-09-14 18:18:38,601 - INFO - Fetched 911 papers for 2025-07-16
+2025-09-14 18:18:38,632 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-16.json
+2025-09-14 18:18:38,632 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:18:41,633 - INFO - Fetching papers for 2025-07-15
+2025-09-14 18:19:15,673 - INFO - Fetched 947 papers for 2025-07-15
+2025-09-14 18:19:15,705 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-15.json
+2025-09-14 18:19:15,706 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:19:18,707 - INFO - Fetching papers for 2025-07-14
+2025-09-14 18:19:53,739 - INFO - Fetched 1000 papers for 2025-07-14
+2025-09-14 18:19:53,774 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-14.json
+2025-09-14 18:19:53,774 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:19:56,776 - INFO - Fetching papers for 2025-07-13
+2025-09-14 18:20:12,848 - INFO - Fetched 437 papers for 2025-07-13
+2025-09-14 18:20:12,863 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-13.json
+2025-09-14 18:20:12,863 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:20:15,864 - INFO - Fetching papers for 2025-07-12
+2025-09-14 18:20:28,134 - INFO - Fetched 373 papers for 2025-07-12
+2025-09-14 18:20:28,147 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-12.json
+2025-09-14 18:20:28,147 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:20:31,149 - INFO - Fetching papers for 2025-07-11
+2025-09-14 18:21:02,689 - INFO - Fetched 806 papers for 2025-07-11
+2025-09-14 18:21:02,718 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-11.json
+2025-09-14 18:21:02,718 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:21:05,720 - INFO - Fetching papers for 2025-07-10
+2025-09-14 18:21:37,741 - INFO - Fetched 886 papers for 2025-07-10
+2025-09-14 18:21:37,774 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-10.json
+2025-09-14 18:21:37,775 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:21:40,776 - INFO - Fetching papers for 2025-07-09
+2025-09-14 18:22:12,357 - INFO - Fetched 890 papers for 2025-07-09
+2025-09-14 18:22:12,391 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-09.json
+2025-09-14 18:22:12,391 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:22:15,392 - INFO - Fetching papers for 2025-07-08
+2025-09-14 18:22:50,572 - INFO - Fetched 945 papers for 2025-07-08
+2025-09-14 18:22:50,608 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-08.json
+2025-09-14 18:22:50,608 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:22:53,609 - INFO - Fetching papers for 2025-07-07
+2025-09-14 18:23:29,382 - INFO - Fetched 964 papers for 2025-07-07
+2025-09-14 18:23:29,419 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-07.json
+2025-09-14 18:23:29,420 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:23:32,420 - INFO - Fetching papers for 2025-07-06
+2025-09-14 18:23:49,035 - INFO - Fetched 406 papers for 2025-07-06
+2025-09-14 18:23:49,051 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-06.json
+2025-09-14 18:23:49,052 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:23:52,053 - INFO - Fetching papers for 2025-07-05
+2025-09-14 18:24:04,735 - INFO - Fetched 379 papers for 2025-07-05
+2025-09-14 18:24:04,749 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-05.json
+2025-09-14 18:24:04,749 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:24:07,751 - INFO - Fetching papers for 2025-07-04
+2025-09-14 18:24:31,675 - INFO - Fetched 650 papers for 2025-07-04
+2025-09-14 18:24:31,700 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-04.json
+2025-09-14 18:24:31,700 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:24:34,701 - INFO - Fetching papers for 2025-07-03
+2025-09-14 18:25:07,309 - INFO - Fetched 871 papers for 2025-07-03
+2025-09-14 18:25:07,340 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-03.json
+2025-09-14 18:25:07,340 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:25:10,342 - INFO - Fetching papers for 2025-07-02
+2025-09-14 18:25:31,723 - WARNING - Empty page for 2025-07-02, skipping...
+2025-09-14 18:25:31,725 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:25:34,727 - INFO - Fetching papers for 2025-07-01
+2025-09-14 18:26:10,575 - INFO - Fetched 917 papers for 2025-07-01
+2025-09-14 18:26:10,617 - INFO - Saved data to public/data/daily/2025-09-14/2025-07-01.json
+2025-09-14 18:26:10,619 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:26:13,621 - INFO - Fetching papers for 2025-06-30
+2025-09-14 18:26:49,488 - INFO - Fetched 989 papers for 2025-06-30
+2025-09-14 18:26:49,518 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-30.json
+2025-09-14 18:26:49,519 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:26:52,520 - INFO - Fetching papers for 2025-06-29
+2025-09-14 18:27:08,464 - INFO - Fetched 421 papers for 2025-06-29
+2025-09-14 18:27:08,480 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-29.json
+2025-09-14 18:27:08,480 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:27:11,481 - INFO - Fetching papers for 2025-06-28
+2025-09-14 18:27:23,890 - INFO - Fetched 378 papers for 2025-06-28
+2025-09-14 18:27:23,903 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-28.json
+2025-09-14 18:27:23,904 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:27:26,905 - INFO - Fetching papers for 2025-06-27
+2025-09-14 18:27:58,213 - INFO - Fetched 803 papers for 2025-06-27
+2025-09-14 18:27:58,240 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-27.json
+2025-09-14 18:27:58,240 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:28:01,241 - INFO - Fetching papers for 2025-06-26
+2025-09-14 18:28:32,797 - INFO - Fetched 874 papers for 2025-06-26
+2025-09-14 18:28:32,827 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-26.json
+2025-09-14 18:28:32,827 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:28:35,828 - INFO - Fetching papers for 2025-06-25
+2025-09-14 18:29:07,881 - INFO - Fetched 880 papers for 2025-06-25
+2025-09-14 18:29:07,911 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-25.json
+2025-09-14 18:29:07,912 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:29:10,912 - INFO - Fetching papers for 2025-06-24
+2025-09-14 18:29:42,430 - INFO - Fetched 879 papers for 2025-06-24
+2025-09-14 18:29:42,459 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-24.json
+2025-09-14 18:29:42,460 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:29:45,462 - INFO - Fetching papers for 2025-06-23
+2025-09-14 18:30:10,649 - WARNING - Empty page for 2025-06-23, skipping...
+2025-09-14 18:30:10,651 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:30:13,652 - INFO - Fetching papers for 2025-06-22
+2025-09-14 18:30:26,289 - INFO - Fetched 381 papers for 2025-06-22
+2025-09-14 18:30:26,303 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-22.json
+2025-09-14 18:30:26,303 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:30:29,304 - INFO - Fetching papers for 2025-06-21
+2025-09-14 18:30:42,030 - INFO - Fetched 358 papers for 2025-06-21
+2025-09-14 18:30:42,043 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-21.json
+2025-09-14 18:30:42,043 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:30:45,045 - INFO - Fetching papers for 2025-06-20
+2025-09-14 18:31:12,952 - INFO - Fetched 767 papers for 2025-06-20
+2025-09-14 18:31:12,977 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-20.json
+2025-09-14 18:31:12,977 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:31:15,978 - INFO - Fetching papers for 2025-06-19
+2025-09-14 18:31:44,867 - INFO - Fetched 782 papers for 2025-06-19
+2025-09-14 18:31:44,894 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-19.json
+2025-09-14 18:31:44,894 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:31:47,894 - INFO - Fetching papers for 2025-06-18
+2025-09-14 18:32:23,041 - INFO - Fetched 906 papers for 2025-06-18
+2025-09-14 18:32:23,072 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-18.json
+2025-09-14 18:32:23,073 - INFO - Waiting 3 seconds before next day...
+2025-09-14 18:32:26,073 - INFO - Fetching papers for 2025-06-17
+2025-09-14 18:33:01,586 - INFO - Fetched 935 papers for 2025-06-17
+2025-09-14 18:33:01,619 - INFO - Saved data to public/data/daily/2025-09-14/2025-06-17.json
+2025-09-14 18:33:01,619 - INFO - Total papers fetched: 60211
+2025-09-14 18:33:03,695 - INFO - Saved 60211 papers to public/data/2025-09-14.json

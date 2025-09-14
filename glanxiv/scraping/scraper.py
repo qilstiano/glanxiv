@@ -25,120 +25,119 @@ def save_partial_results(papers: List[Dict[str, Any]], filename: str) -> None:
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(papers, f, indent=2, ensure_ascii=False)
-        logger.info(f"Saved partial data to {filename}")
+        logger.info(f"Saved data to {filename}")
     except Exception as e:
-        logger.error(f"Failed to save partial results: {e}")
+        logger.error(f"Failed to save results: {e}")
 
-def fetch_arxiv_papers_in_chunks(days: int = 90, chunk_size: int = 30) -> List[Dict[str, Any]]:
+def fetch_papers_for_day(day_date: datetime) -> List[Dict[str, Any]]:
     """
-    Fetch arXiv papers in smaller chunks to avoid API limits and empty page errors.
+    Fetch arXiv papers for a specific day.
     
     Args:
-        days: Total days to fetch
-        chunk_size: Number of days per chunk
+        day_date: The date to fetch papers for
+    """
+    # Calculate date range for the specific day
+    start_date = day_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date = start_date + timedelta(days=1)
+    
+    # Format dates for arXiv query
+    start_str = start_date.strftime("%Y%m%d%H%M")
+    end_str = end_date.strftime("%Y%m%d%H%M")
+    
+    query = f"submittedDate:[{start_str} TO {end_str}]"
+    logger.info(f"Fetching papers for {start_date.date()}")
+    
+    # Use the Client API
+    client = arxiv.Client()
+    search = arxiv.Search(
+        query=query,
+        max_results=1000,
+        sort_by=arxiv.SortCriterion.SubmittedDate,
+        sort_order=arxiv.SortOrder.Descending
+    )
+    
+    papers = []
+    try:
+        # Use client.results() instead of search.results()
+        for result in client.results(search):
+            paper = {
+                "id": result.entry_id,
+                "title": result.title,
+                "authors": [author.name for author in result.authors],
+                "abstract": result.summary,
+                "pdf_url": result.pdf_url,
+                "published": result.published.isoformat(),
+                "categories": result.categories,
+                "primary_category": result.primary_category
+            }
+            papers.append(paper)
+        
+        logger.info(f"Fetched {len(papers)} papers for {start_date.date()}")
+        return papers
+                
+    except arxiv.UnexpectedEmptyPageError as e:
+        # Handle empty page errors specifically
+        logger.warning(f"Empty page for {start_date.date()}, skipping...")
+        return []
+    except Exception as e:
+        logger.error(f"Error fetching papers for {start_date.date()}: {e}")
+        return []
+
+def fetch_arxiv_papers_day_by_day(days: int = 90) -> List[Dict[str, Any]]:
+    """
+    Fetch arXiv papers day by day to handle failures gracefully.
+    
+    Args:
+        days: Number of days to go back
     """
     all_papers = []
     utc_now = datetime.now(timezone.utc)
-    partial_filename = f"public/data/{utc_now.strftime('%Y-%m-%d')}_partial.json"
     
-    # Calculate number of chunks
-    num_chunks = (days + chunk_size - 1) // chunk_size
+    # Create directory for daily files
+    daily_dir = f"public/data/daily/{utc_now.strftime('%Y-%m-%d')}"
+    os.makedirs(daily_dir, exist_ok=True)
     
-    for i in range(num_chunks):
-        # Calculate chunk dates
-        end_date = datetime.now() - timedelta(days=i * chunk_size)
-        start_date = end_date - timedelta(days=min(chunk_size, days - i * chunk_size))
+    # Process each day individually
+    for day_offset in range(days):
+        day_date = datetime.now() - timedelta(days=day_offset)
+        day_filename = f"{daily_dir}/{day_date.strftime('%Y-%m-%d')}.json"
         
-        # Format dates for arXiv query
-        start_str = start_date.strftime("%Y%m%d%H%M")
-        end_str = end_date.strftime("%Y%m%d%H%M")
-        
-        query = f"submittedDate:[{start_str} TO {end_str}]"
-        logger.info(f"Fetching chunk {i+1}/{num_chunks}: {start_date.date()} to {end_date.date()}")
-        
-        # Use the new Client API correctly
-        client = arxiv.Client()
-        search = arxiv.Search(
-            query=query,
-            max_results=2000,
-            sort_by=arxiv.SortCriterion.SubmittedDate,
-            sort_order=arxiv.SortOrder.Descending
-        )
-        
-        chunk_papers = []
-        try:
-            # Use client.results() instead of search.results()
-            for result in client.results(search):
-                paper = {
-                    "id": result.entry_id,
-                    "title": result.title,
-                    "authors": [author.name for author in result.authors],
-                    "abstract": result.summary,
-                    "pdf_url": result.pdf_url,
-                    "published": result.published.isoformat(),
-                    "categories": result.categories,
-                    "primary_category": result.primary_category
-                }
-                chunk_papers.append(paper)
-            
-            logger.info(f"Fetched {len(chunk_papers)} papers from chunk {i+1}")
-            all_papers.extend(chunk_papers)
-            
-            # Save progress after each successful chunk
-            save_partial_results(all_papers, partial_filename)
-            
-            if i < num_chunks - 1:
-                logger.info("Waiting 5 seconds before next chunk...")
-                time.sleep(5)
-                
-        except arxiv.UnexpectedEmptyPageError as e:
-            # Handle empty page errors specifically
-            logger.warning(f"Empty page in chunk {i+1}, continuing with next chunk...")
-            continue
-        except Exception as e:
-            # Save what we have so far immediately
-            logger.error(f"Error fetching chunk {i+1}: {e}")
-            save_partial_results(all_papers, partial_filename)
-            
-            logger.info("Waiting 60 seconds before retry...")
-            time.sleep(60)
-            
-            # Retry logic
+        # Skip if we already have data for this day
+        if os.path.exists(day_filename):
+            logger.info(f"Already processed {day_date.date()}, skipping...")
             try:
-                logger.info(f"Retrying chunk {i+1}...")
-                chunk_papers = []
-                for result in client.results(search):
-                    paper = {
-                        "id": result.entry_id,
-                        "title": result.title,
-                        "authors": [author.name for author in result.authors],
-                        "abstract": result.summary,
-                        "pdf_url": result.pdf_url,
-                        "published": result.published.isoformat(),
-                        "categories": result.categories,
-                        "primary_category": result.primary_category
-                    }
-                    chunk_papers.append(paper)
-                
-                logger.info(f"Fetched {len(chunk_papers)} papers from chunk {i+1} after retry")
-                all_papers.extend(chunk_papers)
-                save_partial_results(all_papers, partial_filename)
-            except Exception as retry_e:
-                logger.error(f"Second attempt failed for chunk {i+1}: {retry_e}")
-                logger.info(f"Skipping chunk {i+1} and continuing...")
+                with open(day_filename, "r", encoding="utf-8") as f:
+                    day_papers = json.load(f)
+                all_papers.extend(day_papers)
                 continue
-
+            except Exception as e:
+                logger.error(f"Error loading existing data for {day_date.date()}: {e}")
+        
+        # Fetch papers for this day
+        day_papers = fetch_papers_for_day(day_date)
+        
+        # Save day's papers immediately
+        if day_papers:
+            save_partial_results(day_papers, day_filename)
+            all_papers.extend(day_papers)
+        
+        # Wait a bit between days to be nice to the API
+        if day_offset < days - 1:
+            logger.info("Waiting 3 seconds before next day...")
+            time.sleep(3)
+    
     return all_papers
 
 if __name__ == "__main__":
     utc_now = datetime.now(timezone.utc)
     logger.info("Starting arXiv scraper...")
 
-    # Fetch papers from last 90 days (3 months) using chunked approach
+    # Fetch papers from last 90 days using day-by-day approach
     try:
-        papers = fetch_arxiv_papers_in_chunks(days=90, chunk_size=30)
+        papers = fetch_arxiv_papers_day_by_day(days=90)
         logger.info(f"Total papers fetched: {len(papers)}")
         
+        # Save combined results
         os.makedirs("public/data", exist_ok=True)
         filename = f"public/data/{utc_now.strftime('%Y-%m-%d')}.json"
 
@@ -146,12 +145,6 @@ if __name__ == "__main__":
             json.dump(papers, f, indent=2, ensure_ascii=False)
         
         logger.info(f"Saved {len(papers)} papers to {filename}")
-        
-        # Remove partial file if full run completed successfully
-        partial_filename = f"public/data/{utc_now.strftime('%Y-%m-%d')}_partial.json"
-        if os.path.exists(partial_filename):
-            os.remove(partial_filename)
-            logger.info(f"Removed partial file {partial_filename}")
             
     except Exception as e:
         logger.error(f"Unexpected error in main: {e}")
