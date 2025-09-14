@@ -61,7 +61,7 @@ const EnhancedLatexText = ({ text, isDark, fontSize = "sm", ...props }: {
   text: string; 
   isDark: boolean;
   fontSize?: string;
-  [key: string]: any;
+  [key: string]: string | boolean | undefined;
 }) => {
   if (!text) return null;
 
@@ -152,7 +152,7 @@ const EnhancedLatexText = ({ text, isDark, fontSize = "sm", ...props }: {
         {elements.length > 0 ? elements : text}
       </Text>
     );
-  } catch (error) {
+  } catch {
     // Fallback for any parsing errors
     return (
       <Text 
@@ -171,7 +171,7 @@ const EnhancedLatexText = ({ text, isDark, fontSize = "sm", ...props }: {
 const EnhancedLatexTitle = ({ title, isDark, ...props }: { 
   title: string; 
   isDark: boolean;
-  [key: string]: any;
+  [key: string]: string | boolean | number | undefined;
 }) => {
   return (
     <Text
@@ -577,7 +577,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                     </Box>
                   )}
                   
-                  {/* Paper details with LaTeX support */}
+                  {/* Paper details with enhanced LaTeX support */}
                   {showSummary && (
                     <Box 
                       flex={isMobile ? 1 : `0 0 ${splitPosition}%`}
@@ -603,7 +603,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                           ))}
                         </HStack>
                         
-                        {/* Full abstract with LaTeX support */}
+                        {/* Full abstract with enhanced LaTeX support */}
                         <EnhancedLatexText 
                           text={processedFullAbstract} 
                           isDark={isDark}
@@ -647,7 +647,6 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                         >
                           <ExternalLink size={14} />
                           <a href={paper.pdf_url} target="_blank">Open PDF in new tab</a>
-
                         </Button>
                       </VStack>
                     </Box>
