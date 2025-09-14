@@ -21,6 +21,10 @@ import { ExternalLink, GripVertical, Eye, EyeOff, MoonStar, Sun, Expand } from '
 import { Paper } from '../app/types'
 import { useState, useRef, useEffect } from 'react'
 
+// Import react-katex for LaTeX rendering
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
+
 // Import react-pdf-viewer
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
@@ -47,41 +51,181 @@ const getRandomGradient = () => {
     ['#10ac84', '#1dd1a1', '#11998e'],
     ['#ee5a24', '#ff9ff3', '#ff7e5f'],
     ['#c56cf0', '#ffb8b8', '#fc5c7d'],
-
-    // Extended ones with 3rd stops
-    ['#ff7e5f', '#feb47b', '#ffd200'],
-    ['#6a11cb', '#2575fc', '#8e2de2'],
-    ['#f7971e', '#ffd200', '#ff9966'],
-    ['#00c6ff', '#0072ff', '#56ccf2'],
-    ['#ff9966', '#ff5e62', '#fc5c7d'],
-    ['#8360c3', '#2ebf91', '#38ef7d'],
-    ['#fc5c7d', '#6a82fb', '#f368e0'],
-    ['#11998e', '#38ef7d', '#00b09b'],
-    ['#fd746c', '#ff9068', '#ff4b2b'],
-    ['#8e2de2', '#4a00e0', '#6a11cb'],
-    ['#ff4b2b', '#ff416c', '#ff6b6b'],
-    ['#56ccf2', '#2f80ed', '#00f260'],
-    ['#00b09b', '#96c93d', '#10ac84'],
-    ['#f953c6', '#b91d73', '#d53369'],
-    ['#ffecd2', '#fcb69f', '#feb47b'],
-    ['#00f260', '#0575e6', '#48dbfb'],
-    ['#eecda3', '#ef629f', '#ff9ff3'],
-    ['#a18cd1', '#fbc2eb', '#c56cf0'],
-    ['#4e54c8', '#8f94fb', '#6a82fb'],
-    ['#d53369', '#cbad6d', '#f7971e']
   ]
 
   return colors[Math.floor(Math.random() * colors.length)]
 }
 
+// Enhanced LaTeX parser component with better error handling
+const EnhancedLatexText = ({ text, isDark, fontSize = "sm", ...props }: { 
+  text: string; 
+  isDark: boolean;
+  fontSize?: string;
+  [key: string]: any;
+}) => {
+  if (!text) return null;
+
+  try {
+    // Enhanced regex patterns for various LaTeX formats
+    const patterns = [
+      // Display math: \[...\] or $$...$$
+      /(\\\[.*?\\\]|\$\$.*?\$\$)/gs,
+      // Inline math: \(...\) or $...$
+      /(\\\(.*?\\\)|\$.*?\$)/gs,
+      // Common LaTeX environments
+      /(\\begin\{.*?\}.*?\\end\{.*?\})/gs,
+    ];
+
+    const elements: React.ReactNode[] = [];
+    let lastIndex = 0;
+
+    // Process each pattern
+    patterns.forEach((pattern) => {
+      const matches = [...text.matchAll(pattern)];
+      
+      matches.forEach((match) => {
+        const [fullMatch] = match;
+        const matchIndex = text.indexOf(fullMatch, lastIndex);
+        
+        if (matchIndex > lastIndex) {
+          // Add text before the match
+          elements.push(text.slice(lastIndex, matchIndex));
+        }
+        
+        try {
+          let cleanedMath = fullMatch;
+          
+          // Clean different LaTeX delimiters
+          if (cleanedMath.startsWith('\\[') && cleanedMath.endsWith('\\]')) {
+            cleanedMath = cleanedMath.slice(2, -2);
+            elements.push(
+              <Box key={`${matchIndex}-block`} my={1}>
+                <BlockMath math={cleanedMath} />
+              </Box>
+            );
+          } 
+          else if (cleanedMath.startsWith('$$') && cleanedMath.endsWith('$$')) {
+            cleanedMath = cleanedMath.slice(2, -2);
+            elements.push(
+              <Box key={`${matchIndex}-block`} my={1}>
+                <BlockMath math={cleanedMath} />
+              </Box>
+            );
+          }
+          else if (cleanedMath.startsWith('\\(') && cleanedMath.endsWith('\\)')) {
+            cleanedMath = cleanedMath.slice(2, -2);
+            elements.push(<InlineMath key={`${matchIndex}-inline`} math={cleanedMath} />);
+          }
+          else if (cleanedMath.startsWith('$') && cleanedMath.endsWith('$')) {
+            cleanedMath = cleanedMath.slice(1, -1);
+            elements.push(<InlineMath key={`${matchIndex}-inline`} math={cleanedMath} />);
+          }
+          else {
+            // Handle LaTeX environments
+            elements.push(
+              <Box key={`${matchIndex}-env`} my={1}>
+                <BlockMath math={cleanedMath} />
+              </Box>
+            );
+          }
+        } catch (error) {
+          // Fallback to raw text if KaTeX parsing fails
+          elements.push(fullMatch);
+        }
+        
+        lastIndex = matchIndex + fullMatch.length;
+      });
+    });
+
+    // Add any remaining text
+    if (lastIndex < text.length) {
+      elements.push(text.slice(lastIndex));
+    }
+
+    return (
+      <Text 
+        fontSize={fontSize} 
+        color={isDark ? "gray.300" : "gray.600"}
+        lineHeight="1.4"
+        {...props}
+      >
+        {elements.length > 0 ? elements : text}
+      </Text>
+    );
+  } catch (error) {
+    // Fallback for any parsing errors
+    return (
+      <Text 
+        fontSize={fontSize} 
+        color={isDark ? "gray.300" : "gray.600"}
+        lineHeight="1.4"
+        {...props}
+      >
+        {text}
+      </Text>
+    );
+  }
+};
+
+// Enhanced title component with LaTeX support
+const EnhancedLatexTitle = ({ title, isDark, ...props }: { 
+  title: string; 
+  isDark: boolean;
+  [key: string]: any;
+}) => {
+  return (
+    <Text
+      color="white"
+      fontWeight="bold"
+      fontSize="lg"
+      lineHeight="1.2"
+      textShadow="0 1px 2px rgba(0,0,0,0.2)"
+      _hover={{ textDecoration: 'none' }}
+      fontFamily="var(--font-instrument-serif)"
+      {...props}
+    >
+      <EnhancedLatexText text={title} isDark={isDark} fontSize="lg" />
+    </Text>
+  );
+};
+
+// Preprocessing function to handle common LaTeX patterns that might be missing delimiters
+const preprocessLatex = (text: string): string => {
+  if (!text) return text;
+  
+  // Common patterns that might need delimiters added
+  const patterns = [
+    // Greek letters and common symbols
+    /\\[a-zA-Z]+/g,
+    // Subscripts: x_2, x_{abc}
+    /[a-zA-Z]_\{?[0-9a-zA-Z]+\}?/g,
+    // Superscripts: x^2, x^{abc}
+    /[a-zA-Z]\^\{?[0-9a-zA-Z]+\}?/g,
+    // Fractions: \frac{a}{b}
+    /\\frac\{.*?\}\{.*?\}/g,
+    // Matrices and arrays
+    /\\begin\{.*matrix\}.*?\\end\{.*matrix\}/gs,
+  ];
+
+  let processed = text;
+  
+  // For very mathematical text, we might need to add $ delimiters around obvious math
+  const hasMathContent = patterns.some(pattern => pattern.test(text));
+  
+  if (hasMathContent && !text.includes('$') && !text.includes('\\[')) {
+    // This is a heuristic - if it looks like math but has no delimiters, wrap it
+    processed = `$${text}$`;
+  }
+  
+  return processed;
+};
 
 export default function PaperCard({ paper, isDark }: PaperCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [gradient] = useState(getRandomGradient())
-  const [splitPosition, setSplitPosition] = useState(50) // 50% split
+  const [splitPosition, setSplitPosition] = useState(50)
   const [isResizing, setIsResizing] = useState(false)
   const [isPdfDarkMode, setIsPdfDarkMode] = useState(() => {
-    // Initialize from localStorage if available, otherwise default to false
     if (typeof window !== 'undefined') {
       return localStorage.getItem('pdf-theme') === 'dark';
     }
@@ -90,9 +234,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
   const [showSummary, setShowSummary] = useState(true)
   const dialogRef = useRef<HTMLDivElement>(null)
   
-  // helper to bypass CORS
   const getProxyUrl = (url: string) => {
-    // Use a CORS proxy service
     return `https://corsproxy.io/?${encodeURIComponent(url)}`;
   };
 
@@ -102,36 +244,32 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
     localStorage.setItem('pdf-theme', theme);
   };
 
-  
-  // Create PDF viewer plugin instance
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
-  // Extract more sentences from abstract instead of using placeholder
   const getTruncatedAbstract = () => {
-    if (paper.abstract.length <= 300) return paper.abstract;
+    if (!paper.abstract || paper.abstract.length <= 300) return paper.abstract;
     
-    // Find a good truncation point after approximately 200 characters
     const truncated = paper.abstract.substring(0, 300);
-    // Find the last sentence end within the truncated text
     const lastPeriod = truncated.lastIndexOf('.');
     const lastQuestion = truncated.lastIndexOf('?');
     const lastExclamation = truncated.lastIndexOf('!');
     
     const lastSentenceEnd = Math.max(lastPeriod, lastQuestion, lastExclamation);
     
-    if (lastSentenceEnd > 100) { // Ensure we have at least some content
+    if (lastSentenceEnd > 100) {
       return paper.abstract.substring(0, lastSentenceEnd + 1) + '..';
     }
     
-    // If no good sentence end found, just truncate at 200 chars
     return paper.abstract.substring(0, 200) + '...';
   };
 
   const displayAbstract = getTruncatedAbstract();
+  const processedTitle = preprocessLatex(paper.title);
+  const processedAbstract = preprocessLatex(displayAbstract || '');
+  const processedFullAbstract = preprocessLatex(paper.abstract || '');
   
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  // Handle resizing
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isResizing || !dialogRef.current) return;
@@ -139,7 +277,6 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
       const dialogRect = dialogRef.current.getBoundingClientRect();
       const newPosition = ((e.clientX - dialogRect.left) / dialogRect.width) * 100;
       
-      // Limit split position between 30% and 70% (minimum 30% for PDF, 70% for summary)
       const clampedPosition = Math.max(30, Math.min(70, newPosition));
       setSplitPosition(clampedPosition);
     };
@@ -172,17 +309,15 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
     setIsExpanded(true);
   };
 
-  // Toggle summary visibility
   const toggleSummary = () => {
     setShowSummary(!showSummary);
     if (showSummary) {
-      setSplitPosition(100); // Show only PDF when summary is hidden
+      setSplitPosition(100);
     } else {
-      setSplitPosition(50); // Reset to default split when showing summary
+      setSplitPosition(50);
     }
   };
 
-  // Toggle PDF dark mode
   const togglePdfDarkMode = () => {
     const newTheme = isPdfDarkMode ? 'light' : 'dark';
     handleSwitchTheme(newTheme);
@@ -197,6 +332,27 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
 
         .pdf-dark-mode .rpv-core__viewer img {
           filter: invert(1) hue-rotate(180deg);
+        }
+
+        /* Improved Katex styling */
+        .katex {
+          font-size: 1.05em !important;
+        }
+
+        .katex-display {
+          margin: 0.8em 0 !important;
+          overflow-x: auto;
+          overflow-y: hidden;
+        }
+
+        .katex-display > .katex {
+          display: inline-block;
+          white-space: nowrap;
+        }
+
+        /* Better inline math alignment */
+        .katex .base {
+          vertical-align: middle;
         }
       `}</style>
 
@@ -220,17 +376,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
           cursor="pointer"
           onClick={handleTitleClick}
         >
-          <Text
-            color="white"
-            fontWeight="bold"
-            fontSize="lg"
-            lineHeight="1.2"
-            textShadow="0 1px 2px rgba(0,0,0,0.2)"
-            _hover={{ textDecoration: 'none' }}
-            fontFamily="var(--font-instrument-serif)"
-          >
-            {paper.title}
-          </Text>
+          <EnhancedLatexTitle title={processedTitle} isDark={isDark} />
         </Box>
 
         <Card.Body pt={4}>
@@ -246,7 +392,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
               >
                 <Tag.Label>#{paper.primary_category}</Tag.Label>
               </Tag.Root>
-              {paper.categories.filter(cat => cat !== paper.primary_category).slice(0, 2).map((category, index) => (
+              {paper.categories?.filter(cat => cat !== paper.primary_category).slice(0, 2).map((category, index) => (
                 <Tag.Root 
                   key={index}
                   size="sm"
@@ -260,7 +406,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                   <Tag.Label>#{category}</Tag.Label>
                 </Tag.Root>
               ))}
-              {paper.categories.length > 3 && (
+              {paper.categories?.length > 3 && (
                 <Tag.Root 
                   size="sm"
                   variant="outline"
@@ -275,14 +421,8 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
               )}
             </HStack>
 
-            {/* Abstract */}
-            <Text 
-              fontSize="sm" 
-              color={isDark ? "gray.300" : "gray.600"}
-              lineHeight="1.4"
-            >
-              {displayAbstract}
-            </Text>
+            {/* Abstract with enhanced LaTeX support */}
+            <EnhancedLatexText text={processedAbstract} isDark={isDark} />
 
             {/* Authors and date */}
             <VStack align="start" gap={1} w="full">
@@ -292,20 +432,20 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                 fontStyle="italic"
                 lineHeight="1.2"
               >
-                by {paper.authors.slice(0, 3).join(', ')}
+                by {paper.authors?.slice(0, 3).join(', ') || 'Unknown authors'}
               </Text>
               <Text 
                 fontSize="xs" 
                 color={isDark ? "gray.500" : "gray.400"}
                 fontFamily="var(--font-geist-mono)"
               >
-                {new Date(paper.published).toLocaleDateString()}
+                {paper.published ? new Date(paper.published).toLocaleDateString() : 'Date unknown'}
               </Text>
             </VStack>
 
             {/* Expand button and Visit arXiv button */}
             <HStack w="full" justify="space-between" mt={2}>
-              {paper.abstract.length > 200 && (
+              {paper.abstract && paper.abstract.length > 200 && (
                 <Button
                   variant={isDark ? "outline" : "solid"}
                   size="sm"
@@ -326,9 +466,10 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                 color={isDark ? "white" : "gray"}
                 colorPalette={"gray"}
                 _hover={{ textDecoration: 'underline' }}
+                rel="noopener noreferrer"
               >
                 <ExternalLink size={16} />
-                <a href={paper.pdf_url}>arXiv</a>
+                <a href={paper.pdf_url} target="_blank">arXiv</a>
               </Button>
             </HStack>
           </VStack>
@@ -364,20 +505,17 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Text 
-                  fontSize="xl" 
-                  fontWeight="bold"
-                  fontFamily="var(--font-instrument-serif)"
+                <EnhancedLatexTitle 
+                  title={processedTitle} 
+                  isDark={isDark}
+                  fontSize="xl"
                   color={isDark ? "white" : "gray.900"}
                   flex="1"
                   mr={4}
-                >
-                  {paper.title}
-                </Text>
+                />
                 
                 {/* Header controls */}
                 <HStack gap={5}>
-                  {/* Toggle PDF dark mode */}
                   <IconButton
                     variant="plain"
                     size="sm"
@@ -389,7 +527,6 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                     {isPdfDarkMode ? <Text color="#df7b1eff" fontFamily="var(--font-geist-mono)"> Light </Text> : <Text color="#588fe2ff" fontFamily="var(--font-geist-mono)"> Dark </Text> }
                   </IconButton>
                   
-                  {/* Toggle summary visibility */}
                   <IconButton
                     variant="plain"
                     size="md"
@@ -440,7 +577,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                     </Box>
                   )}
                   
-                  {/* Paper details - conditionally rendered based on showSummary state */}
+                  {/* Paper details with LaTeX support */}
                   {showSummary && (
                     <Box 
                       flex={isMobile ? 1 : `0 0 ${splitPosition}%`}
@@ -448,11 +585,11 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                       overflowY="auto" 
                       h="full"
                       fontFamily="var(--font-geist)"
-                      minW={isMobile ? "100%" : "30%"} // Minimum width for summary
+                      minW={isMobile ? "100%" : "30%"}
                     >
                       <VStack align="start" gap={4} h="full">
                         <HStack gap={2} flexWrap="wrap">
-                          {paper.categories.map((category, index) => (
+                          {paper.categories?.map((category, index) => (
                             <Tag.Root 
                               key={index}
                               size="sm"
@@ -466,13 +603,13 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                           ))}
                         </HStack>
                         
-                        <Text 
-                          color={isDark ? "gray.300" : "gray.600"}
+                        {/* Full abstract with LaTeX support */}
+                        <EnhancedLatexText 
+                          text={processedFullAbstract} 
+                          isDark={isDark}
                           lineHeight="1.6"
                           fontFamily="var(--font-geist)"
-                        >
-                          {paper.abstract}
-                        </Text>
+                        />
                         
                         <VStack align="start" gap={1} mt="auto" pt={4}>
                           <Text 
@@ -488,7 +625,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                             color={isDark ? "gray.400" : "gray.600"}
                             fontFamily="var(--font-geist)"
                           >
-                            {paper.authors.join(', ')}
+                            {paper.authors?.join(', ') || 'Unknown authors'}
                           </Text>
                           
                           <Text 
@@ -497,7 +634,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                             fontFamily="var(--font-geist-mono)"
                             mt={2}
                           >
-                            Published: {new Date(paper.published).toLocaleDateString()}
+                            Published: {paper.published ? new Date(paper.published).toLocaleDateString() : 'Date unknown'}
                           </Text>
                         </VStack>
                         
@@ -509,13 +646,14 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                           mt={4}
                         >
                           <ExternalLink size={14} />
-                          <a href={paper.pdf_url}>Open PDF in new tab</a>
+                          <a href={paper.pdf_url} target="_blank">Open PDF in new tab</a>
+
                         </Button>
                       </VStack>
                     </Box>
                   )}
                   
-                  {/* PDF preview - takes full remaining space */}
+                  {/* PDF preview */}
                   <Box 
                     flex={1}
                     bg={isDark ? "gray.800" : "gray.100"}
@@ -528,7 +666,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                     position="relative"
                     minH={isMobile ? "40vh" : "auto"}
                     minW={isMobile ? "100%" : "45%"}
-                    className={isPdfDarkMode ? "pdf-dark-mode" : ""} // Add this line
+                    className={isPdfDarkMode ? "pdf-dark-mode" : ""}
                   >
                     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                       <Viewer
