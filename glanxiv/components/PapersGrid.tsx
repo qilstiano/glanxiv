@@ -1,62 +1,30 @@
 // components/PapersGrid.tsx
-import { SimpleGrid, Center, Text, For, Box, Button, VStack } from '@chakra-ui/react'
+import { SimpleGrid, For, Box } from '@chakra-ui/react'
 import PaperCard from './PaperCard'
 import { Paper } from '../app/types'
-import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
 
 interface PapersGridProps {
   papers: Paper[]
   isDark: boolean
-  initialVisibleCount?: number
 }
 
-export default function PapersGrid({ papers, isDark, initialVisibleCount = 6 }: PapersGridProps) {
-  const [visibleCount, setVisibleCount] = useState(initialVisibleCount)
-  const visiblePapers = papers.slice(0, visibleCount)
-
+export default function PapersGrid({ papers, isDark }: PapersGridProps) {
   if (papers.length === 0) {
-    return (
-      <Center py={12}>
-        <Text color={isDark ? "gray.400" : "gray.500"} fontSize="lg" fontFamily="var(--font-geist)">
-          No papers found. Try a different search term or check back later.
-        </Text>
-      </Center>
-    )
+    return null; // Let parent component handle empty state
   }
 
-  const hasMore = visibleCount < papers.length
-
   return (
-    <VStack gap={4} align="stretch">
-      <Text color={isDark ? "gray.400" : "gray.500"} fontSize="sm" fontFamily="var(--font-geist-mono)">
-        /loaded {papers.length} papers
-      </Text>
-      <SimpleGrid 
-        columns={{ base: 1, sm: 2, md: 3, lg: 3 }} 
-        gap={6}
-      >
-        <For each={visiblePapers}>
-          {(paper) => (
-            <Box key={paper.id}>
-              <PaperCard paper={paper} isDark={isDark} />
-            </Box>
-          )}
-        </For>
-      </SimpleGrid>
-
-      {hasMore && (
-        <Center>
-          <Button
-            onClick={() => setVisibleCount(prev => prev + initialVisibleCount)}
-            colorPalette="blue"
-            variant="outline"
-          >
-            Load More Papers
-            <ChevronDown/>
-          </Button>
-        </Center>
-      )}
-    </VStack>
+    <SimpleGrid 
+      columns={{ base: 1, sm: 2, md: 3, lg: 3 }} 
+      gap={6}
+    >
+      <For each={papers}>
+        {(paper) => (
+          <Box key={paper.id}>
+            <PaperCard paper={paper} isDark={isDark} />
+          </Box>
+        )}
+      </For>
+    </SimpleGrid>
   )
 }

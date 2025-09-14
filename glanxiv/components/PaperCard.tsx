@@ -145,7 +145,7 @@ const EnhancedLatexText = ({ text, isDark, fontSize = "sm", ...props }: {
     return (
       <Text 
         fontSize={fontSize} 
-        color={isDark ? "gray.300" : "gray.600"}
+        color={isDark ? "gray.100" : "gray.600"}
         lineHeight="1.4"
         {...props}
       >
