@@ -13,14 +13,15 @@ a modern ui wrapper for arXiv that i built because i got bored of the default in
 ## what's coming
 
 - ai-generated summaries of papers/highlights (because who reads the whole thing)
-- social features to share and discuss papers with others
+- social features to share and discuss papers with others [to-do]
 - better search and filtering options [X]
-- personal library to save papers across sessions
+- personal library to save papers across sessions [to-do]
 - more categories to be supported [X]
-- auth and db integration
+- auth and db integration [to-do]
 - recommendation algo for your favourite categories
-- MORE SCRAPING!!!!! (thank you arXiv for making your API publicly accessible i promise to use it responsibly :>)
-- 
+- MORE SCRAPING!!!!! (thank you arXiv for making your API publicly accessible i promise to use it responsibly :>) [in-progress]
+- status monitoring [to-do]
+- publicly available API endpoints for generating paper summaries on the fly
 
 ## technical stuff
 
