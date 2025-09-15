@@ -26,15 +26,22 @@ jobs:
         
     - name: Run daily arXiv scraper
       run: |
-        ls
-        cd scraping
-        ls
-        python scraper.py --daily
+        # Debug: show directory structure
+        echo "Current directory: $(pwd)"
+        ls -la
+        echo "glanxiv directory:"
+        ls -la glanxiv/ || echo "No glanxiv directory"
+        echo "scraping directory:"
+        ls -la glanxiv/scraping/ || echo "No scraping directory"
+        
+        # Run the script from the correct location
+        cd glanxiv
+        python scraping/scraper.py --daily
         
     - name: Commit and push changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add scraping/daily/
+        git add glanxiv/scraping/daily/
         git commit -m "Add daily arXiv data for $(date +'%Y-%m-%d')" || echo "No changes to commit"
         git push
