@@ -13,6 +13,7 @@ a modern ui wrapper for arXiv that i built because i got bored of the default in
 ## what's coming
 
 - ai-generated summaries of papers/highlights (because who reads the whole thing)
+- keyword tagging and searching 
 - social features to share and discuss papers with others [to-do]
 - better search and filtering options [done]
 - personal library to save papers across sessions [to-do]
