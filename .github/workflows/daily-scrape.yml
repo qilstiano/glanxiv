@@ -10,15 +10,11 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write  # Add write permissions for GITHUB_TOKEN
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}  # Use the automatic token
-        
+      
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -37,8 +33,8 @@ jobs:
         
     - name: Commit and push changes
       run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         git add scraping/daily/
         git commit -m "Add daily arXiv data for $(date +'%Y-%m-%d')" || echo "No changes to commit"
         git push
