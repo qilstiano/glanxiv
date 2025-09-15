@@ -29,13 +29,11 @@ const footerLinks = {
   ],
   resources: [
     { label: 'Documentation', href: '#docs' },
-    { label: 'Tutorials', href: '#tutorials' },
-    { label: 'Blog', href: '#blog' },
-    { label: 'Community', href: '#community' },
+    { label: 'Forum', href: '#forum' },
+    { label: 'Contributing', href: '#contributing' },
   ],
   company: [
     { label: 'About', href: '#about' },
-    { label: 'Contact', href: '#contact' },
     { label: 'Privacy', href: '#privacy' },
     { label: 'Legal', href: '#legal' },
   ],
@@ -274,7 +272,7 @@ function Footer({ isDark }: FooterProps) {
               fontSize="sm"
               color={isDark ? "gray.400" : "gray.600"}
             >
-              © {new Date().getFullYear()} Glanxiv
+              © {new Date().getFullYear()} glanxiv
             </Text>
           </HStack>
         </Flex>

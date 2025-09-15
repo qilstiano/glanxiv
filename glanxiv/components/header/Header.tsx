@@ -272,6 +272,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
                         onSubmit={handleCategorySubmit} // Add this prop
                         selectedCategories={selectedCategories}
                         onRemoveCategory={handleRemoveCategory}
+                        onSetCategories={setSelectedCategories}
                         isMobile={isMobile}
                         onFocus={() => setShowCategoryDropdown(true)}
                       />
@@ -340,6 +341,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
                         onSubmit={handleCategorySubmit} // Add this prop
                         selectedCategories={selectedCategories}
                         onRemoveCategory={handleRemoveCategory}
+                        onSetCategories={setSelectedCategories}
                         isMobile={isMobile}
                         onFocus={() => setShowCategoryDropdown(true)}
                       />
@@ -350,7 +352,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
             </Flex>
 
             {/* Bottom Row: Category Navigation (Desktop Only) */}
-            {!isScrolled && !isMobile && (
+            {!isScrolled && (
               <DesktopNav 
                 isDark={isDark}
                 selectedCategories={selectedCategories}
@@ -363,7 +365,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
 
       {/* Spacer - Fixed height calculation */}
       <Box h={{ 
-        base: isScrolled ? '100px' : '120px', 
+        base: isScrolled ? '90px' : '100px', 
         md: isScrolled ? '90px' : '100px'
       }} />
 

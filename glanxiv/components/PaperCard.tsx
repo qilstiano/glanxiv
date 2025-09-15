@@ -57,9 +57,10 @@ const getRandomGradient = () => {
 }
 
 // Enhanced LaTeX parser component with better error handling
-const EnhancedLatexText = ({ text, isDark, fontSize = "sm", ...props }: { 
+const EnhancedLatexText = ({ text, isDark, isGradient, fontSize = "sm", ...props }: { 
   text: string; 
   isDark: boolean;
+  isGradient: boolean;
   fontSize?: string;
   [key: string]: string | boolean | undefined;
 }) => {
@@ -128,7 +129,7 @@ const EnhancedLatexText = ({ text, isDark, fontSize = "sm", ...props }: {
               </Box>
             );
           }
-        } catch (error) {
+        } catch {
           // Fallback to raw text if KaTeX parsing fails
           elements.push(fullMatch);
         }
@@ -145,7 +146,10 @@ const EnhancedLatexText = ({ text, isDark, fontSize = "sm", ...props }: {
     return (
       <Text 
         fontSize={fontSize} 
-        color={isDark ? "gray.100" : "gray.600"}
+        color={isGradient 
+                ? "white"
+                : isDark ? "gray.100" : "gray.600"
+              }
         lineHeight="1.4"
         {...props}
       >
@@ -168,9 +172,10 @@ const EnhancedLatexText = ({ text, isDark, fontSize = "sm", ...props }: {
 };
 
 // Enhanced title component with LaTeX support
-const EnhancedLatexTitle = ({ title, isDark, ...props }: { 
+const EnhancedLatexTitle = ({ title, isDark, isGradient, ...props }: { 
   title: string; 
   isDark: boolean;
+  isGradient: boolean;
   [key: string]: string | boolean | number | undefined;
 }) => {
   return (
@@ -184,7 +189,7 @@ const EnhancedLatexTitle = ({ title, isDark, ...props }: {
       fontFamily="var(--font-instrument-serif)"
       {...props}
     >
-      <EnhancedLatexText text={title} isDark={isDark} fontSize="lg" />
+      <EnhancedLatexText text={title} isGradient={isGradient} isDark={isDark} fontSize="lg" />
     </Text>
   );
 };
@@ -376,7 +381,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
           cursor="pointer"
           onClick={handleTitleClick}
         >
-          <EnhancedLatexTitle title={processedTitle} isDark={isDark} />
+          <EnhancedLatexTitle title={processedTitle} isGradient={true} isDark={isDark} />
         </Box>
 
         <Card.Body pt={4}>
@@ -422,7 +427,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
             </HStack>
 
             {/* Abstract with enhanced LaTeX support */}
-            <EnhancedLatexText text={processedAbstract} isDark={isDark} />
+            <EnhancedLatexText text={processedAbstract} isDark={isDark} isGradient={false} />
 
             {/* Authors and date */}
             <VStack align="start" gap={1} w="full">
@@ -512,6 +517,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                   color={isDark ? "white" : "gray.900"}
                   flex="1"
                   mr={4}
+                  isGradient={false} 
                 />
                 
                 {/* Header controls */}
@@ -609,6 +615,7 @@ export default function PaperCard({ paper, isDark }: PaperCardProps) {
                           isDark={isDark}
                           lineHeight="1.6"
                           fontFamily="var(--font-geist)"
+                          isGradient={false} 
                         />
                         
                         <VStack align="start" gap={1} mt="auto" pt={4}>

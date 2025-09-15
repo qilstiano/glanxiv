@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Box, Spinner, Button, Center, Text, IconButton } from '@chakra-ui/react'
+import { Box, Button, Center, Text, IconButton } from '@chakra-ui/react'
 import Header from '../../components/header/Header'
 import ErrorDisplay from '../../components/ErrorDisplay'
 import PapersGrid from '../../components/PapersGrid'
