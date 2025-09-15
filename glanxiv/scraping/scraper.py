@@ -97,6 +97,74 @@ def get_existing_dates(daily_dir: str) -> set:
                     continue
     return existing_dates
 
+def get_missing_dates(daily_dir: str, max_days_to_check: int = 3650) -> List[datetime]:
+    """
+    Find dates that are missing from the daily directory (going back up to 10 years).
+    Returns up to 90 missing dates, starting from the oldest missing date.
+    """
+    utc_now = datetime.now(timezone.utc)
+    existing_dates = get_existing_dates(daily_dir)
+    
+    missing_dates = []
+    
+    # Check dates going back up to 10 years (3650 days)
+    for day_offset in range(1, max_days_to_check + 1):
+        current_date = utc_now - timedelta(days=day_offset)
+        date_str = current_date.strftime('%Y-%m-%d')
+        
+        if date_str not in existing_dates:
+            missing_dates.append(current_date)
+            
+            # Stop when we have 90 missing dates
+            if len(missing_dates) >= 90:
+                break
+    
+    # Return in chronological order (oldest first)
+    return sorted(missing_dates)
+
+def fetch_arxiv_papers_for_missing_dates(daily_dir: str = "scraping/daily", max_days: int = 90) -> List[Dict[str, Any]]:
+    """
+    Fetch arXiv papers for missing dates (historical data that hasn't been scraped before).
+    
+    Args:
+        daily_dir: Directory to store daily files
+        max_days: Maximum number of missing days to scrape
+    """
+    # Create directory for daily files
+    os.makedirs(daily_dir, exist_ok=True)
+    
+    # Get missing dates (historical data that hasn't been scraped)
+    missing_dates = get_missing_dates(daily_dir, max_days_to_check=3650)
+    
+    if not missing_dates:
+        logger.info("No missing dates found. All historical data up to 10 years back appears to be scraped.")
+        return []
+    
+    logger.info(f"Found {len(missing_dates)} missing dates to scrape")
+    
+    all_papers = []
+    
+    # Process each missing day individually
+    for i, current_date in enumerate(missing_dates):
+        date_str = current_date.strftime('%Y-%m-%d')
+        day_filename = f"{daily_dir}/{date_str}.json"
+        
+        logger.info(f"Scraping missing date {i+1}/{len(missing_dates)}: {date_str}")
+        
+        # Fetch papers for this day
+        day_papers = fetch_papers_for_day(current_date)
+        
+        # Save day's papers immediately as standalone JSON
+        save_daily_results(day_papers, day_filename)
+        all_papers.extend(day_papers)
+        
+        # Wait a bit between days to be nice to the API
+        if i < len(missing_dates) - 1:
+            logger.info("Waiting 3 seconds before next day...")
+            time.sleep(3)
+    
+    return all_papers
+
 def fetch_arxiv_papers_day_by_day(start_date: datetime = None, 
                                  end_date: datetime = None,
                                  days: int = None,
@@ -180,44 +248,51 @@ def main():
     parser.add_argument("--start-date", type=str, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end-date", type=str, help="End date (YYYY-MM-DD)")
     parser.add_argument("--daily", action="store_true", help="Scrape only today's papers")
+    parser.add_argument("--historical", action="store_true", help="Scrape missing historical data (90 days)")
     
     args = parser.parse_args()
     
     utc_now = datetime.now(timezone.utc)
     logger.info("Starting arXiv scraper...")
-    
-    # Determine scraping mode
-    if args.daily:
-        # Scrape only today
-        start_date = utc_now.replace(hour=0, minute=0, second=0, microsecond=0)
-        end_date = start_date
-        days = None
-    elif args.days:
-        # Scrape last N days
-        days = args.days
-        start_date = None
-        end_date = None
-    elif args.start_date and args.end_date:
-        # Scrape custom date range
-        start_date = parse_date(args.start_date)
-        end_date = parse_date(args.end_date)
-        days = None
-    else:
-        # Default: scrape today only
-        start_date = utc_now.replace(hour=0, minute=0, second=0, microsecond=0)
-        end_date = start_date
-        days = None
-    
-    # Fetch papers
     try:
-        papers = fetch_arxiv_papers_day_by_day(
-            start_date=start_date,
-            end_date=end_date,
-            days=days
-        )
-        
-        logger.info(f"Total papers fetched: {len(papers)}")
+        # Determine scraping mode
+        if args.historical:
+            # Scrape missing historical data (90 days that haven't been scraped before)
+            try:
+                papers = fetch_arxiv_papers_for_missing_dates(max_days=90)
+                logger.info(f"Scraped {len(papers)} papers from missing historical dates")
+            except Exception as e:
+                logger.error(f"Error scraping historical data: {e}")
+                raise
+                
+        elif args.daily:
+            # Scrape only today
+            papers = fetch_arxiv_papers_day_by_day(
+                start_date=utc_now.replace(hour=0, minute=0, second=0, microsecond=0),
+                end_date=utc_now.replace(hour=0, minute=0, second=0, microsecond=0)
+            )
+            logger.info(f"Scraped {len(papers)} papers for today")
             
+        elif args.days:
+            # Scrape last N days
+            papers = fetch_arxiv_papers_day_by_day(days=args.days)
+            logger.info(f"Scraped {len(papers)} papers from the last {args.days} days")
+            
+        elif args.start_date and args.end_date:
+            # Scrape custom date range
+            start_date = parse_date(args.start_date)
+            end_date = parse_date(args.end_date)
+            papers = fetch_arxiv_papers_day_by_day(start_date=start_date, end_date=end_date)
+            logger.info(f"Scraped {len(papers)} papers from {args.start_date} to {args.end_date}")
+            
+        else:
+            # Default: scrape today only
+            papers = fetch_arxiv_papers_day_by_day(
+                start_date=utc_now.replace(hour=0, minute=0, second=0, microsecond=0),
+                end_date=utc_now.replace(hour=0, minute=0, second=0, microsecond=0)
+            )
+            logger.info(f"Scraped {len(papers)} papers for today")
+                
     except Exception as e:
         logger.error(f"Unexpected error in main: {e}")
         # Save whatever we have if main fails
