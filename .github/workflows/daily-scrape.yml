@@ -26,7 +26,10 @@ jobs:
         
     - name: Run daily arXiv scraper
       run: |
-        python scraping/scraper.py --daily
+        ls
+        cd scraping
+        ls
+        python scraper.py --daily
         
     - name: Commit and push changes
       run: |
