@@ -11,13 +11,14 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Add this line to grant write permissions
+      contents: write
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}  # Add this line to use the token
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0  # Fetch all history instead of just the latest commit
       
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -44,8 +45,12 @@ jobs:
         
     - name: Commit and push changes
       run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"  # Use the correct bot email
-        git config --local user.name "github-actions[bot]"  # Use the correct bot name
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        
+        # Pull the latest changes first to avoid conflicts
+        git pull origin main --rebase
+        
         git add glanxiv/scraping/daily/
         git commit -m "Add daily arXiv data for $(date +'%Y-%m-%d')" || echo "No changes to commit"
-        git push
+        git push origin main

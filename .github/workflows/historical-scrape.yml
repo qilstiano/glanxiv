@@ -17,6 +17,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0  # Fetch all history to avoid conflicts
         
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -43,6 +44,10 @@ jobs:
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
+        
+        # Pull latest changes first to avoid conflicts
+        git pull origin main --rebase
+        
         git add glanxiv/scraping/daily/
         git commit -m "Add historical arXiv data (90 days) for $(date +'%Y-%m-%d')" || echo "No changes to commit"
-        git push
+        git push origin main
