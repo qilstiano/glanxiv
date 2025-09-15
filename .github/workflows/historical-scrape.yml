@@ -25,7 +25,7 @@ jobs:
         
     - name: Run historical arXiv scraper (90 days)
       run: |
-        python scripts/scrape_arxiv.py --days 90
+        python scraping/scraper.py --days 90
         
     - name: Commit and push changes
       run: |

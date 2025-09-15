@@ -5,7 +5,7 @@ import os
 import logging
 import time
 import argparse
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 
 # Set up logging
 logging.basicConfig(
@@ -20,13 +20,13 @@ logger = logging.getLogger(__name__)
 # Reduce verbosity of arxiv library logs
 logging.getLogger('arxiv').setLevel(logging.WARNING)
 
-def save_partial_results(papers: List[Dict[str, Any]], filename: str) -> None:
-    """Save partial results to a file."""
+def save_daily_results(papers: List[Dict[str, Any]], filename: str) -> None:
+    """Save daily results to a file."""
     try:
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(papers, f, indent=2, ensure_ascii=False)
-        logger.info(f"Saved data to {filename}")
+        logger.info(f"Saved {len(papers)} papers to {filename}")
     except Exception as e:
         logger.error(f"Failed to save results: {e}")
 
@@ -100,7 +100,7 @@ def get_existing_dates(daily_dir: str) -> set:
 def fetch_arxiv_papers_day_by_day(start_date: datetime = None, 
                                  end_date: datetime = None,
                                  days: int = None,
-                                 daily_dir: str = None) -> List[Dict[str, Any]]:
+                                 daily_dir: str = "scraping/daily") -> List[Dict[str, Any]]:
     """
     Fetch arXiv papers day by day to handle failures gracefully.
     
@@ -126,10 +126,6 @@ def fetch_arxiv_papers_day_by_day(start_date: datetime = None,
         start_date = utc_now.replace(hour=0, minute=0, second=0, microsecond=0)
         end_date = start_date
     
-    # Ensure daily_dir is set
-    if daily_dir is None:
-        daily_dir = f"scraping/daily/{utc_now.strftime('%Y-%m-%d')}"
-    
     # Create directory for daily files
     os.makedirs(daily_dir, exist_ok=True)
     
@@ -145,10 +141,11 @@ def fetch_arxiv_papers_day_by_day(start_date: datetime = None,
     # Process each day individually
     for day_num in range(total_days):
         current_date = start_date + timedelta(days=day_num)
-        day_filename = f"{daily_dir}/{current_date.strftime('%Y-%m-%d')}.json"
+        date_str = current_date.strftime('%Y-%m-%d')
+        day_filename = f"{daily_dir}/{date_str}.json"
         
         # Skip if we already have data for this day
-        if current_date.strftime('%Y-%m-%d') in existing_dates:
+        if date_str in existing_dates:
             logger.info(f"Already processed {current_date.date()}, skipping...")
             try:
                 with open(day_filename, "r", encoding="utf-8") as f:
@@ -161,13 +158,9 @@ def fetch_arxiv_papers_day_by_day(start_date: datetime = None,
         # Fetch papers for this day
         day_papers = fetch_papers_for_day(current_date)
         
-        # Save day's papers immediately
-        if day_papers:
-            save_partial_results(day_papers, day_filename)
-            all_papers.extend(day_papers)
-        else:
-            # Save empty array to mark this day as processed
-            save_partial_results([], day_filename)
+        # Save day's papers immediately as standalone JSON
+        save_daily_results(day_papers, day_filename)
+        all_papers.extend(day_papers)
         
         # Wait a bit between days to be nice to the API
         if day_num < total_days - 1:
@@ -187,18 +180,11 @@ def main():
     parser.add_argument("--start-date", type=str, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end-date", type=str, help="End date (YYYY-MM-DD)")
     parser.add_argument("--daily", action="store_true", help="Scrape only today's papers")
-    parser.add_argument("--output-dir", type=str, help="Custom output directory")
     
     args = parser.parse_args()
     
     utc_now = datetime.now(timezone.utc)
     logger.info("Starting arXiv scraper...")
-    
-    # Set output directory
-    if args.output_dir:
-        daily_dir = args.output_dir
-    else:
-        daily_dir = f"scraping/daily"
     
     # Determine scraping mode
     if args.daily:
@@ -227,27 +213,16 @@ def main():
         papers = fetch_arxiv_papers_day_by_day(
             start_date=start_date,
             end_date=end_date,
-            days=days,
-            daily_dir=daily_dir
+            days=days
         )
         
         logger.info(f"Total papers fetched: {len(papers)}")
-        
-        # Save combined results if we scraped multiple days
-        if (args.days and args.days > 1) or (args.start_date and args.end_date and args.start_date != args.end_date):
-            os.makedirs("public/data", exist_ok=True)
-            filename = f"public/data/{utc_now.strftime('%Y-%m-%d')}.json"
-
-            with open(filename, "w", encoding="utf-8") as f:
-                json.dump(papers, f, indent=2, ensure_ascii=False)
-            
-            logger.info(f"Saved {len(papers)} papers to {filename}")
             
     except Exception as e:
         logger.error(f"Unexpected error in main: {e}")
         # Save whatever we have if main fails
         if 'papers' in locals():
-            save_partial_results(papers, f"public/data/{utc_now.strftime('%Y-%m-%d')}_emergency.json")
+            save_daily_results(papers, f"scraping/daily/{utc_now.strftime('%Y-%m-%d')}_emergency.json")
 
 if __name__ == "__main__":
     main()

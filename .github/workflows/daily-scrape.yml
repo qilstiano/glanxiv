@@ -26,13 +26,12 @@ jobs:
         
     - name: Run daily arXiv scraper
       run: |
-        python scripts/scrape_arxiv.py --daily
+        python scraping/scraper.py --daily
         
     - name: Commit and push changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add scraping/
-        git add public/data/ || echo "No combined data to add"
+        git add scraping/daily/
         git commit -m "Add daily arXiv data for $(date +'%Y-%m-%d')" || echo "No changes to commit"
         git push
