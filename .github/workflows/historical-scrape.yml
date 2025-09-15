@@ -1,0 +1,37 @@
+name: Historical arXiv Scraper
+
+on:
+  schedule:
+    # Run daily at 02:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        pip install arxiv
+        
+    - name: Run historical arXiv scraper (90 days)
+      run: |
+        python scripts/scrape_arxiv.py --days 90
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add scraping/
+        git add public/data/ || echo "No combined data to add"
+        git commit -m "Add historical arXiv data (90 days) for $(date +'%Y-%m-%d')" || echo "No changes to commit"
+        git push

@@ -165,14 +165,14 @@ function Footer({ isDark }: FooterProps) {
         
         {/* Social links and description */}
         <VStack gap={4} mb={8} align="center">
-          <Text 
-            fontSize="md" 
+                    <Text 
+            fontSize="xs" 
             maxW="500px" 
             textAlign="center"
             color={isDark ? "gray.400" : "gray.600"}
             fontFamily="var(--font-geist-mono)"
           >
-            your open-source library for research.
+            Thank you to arXiv for use of its open access interoperability.
           </Text>
           
           <HStack gap={4}>
@@ -214,6 +214,7 @@ function Footer({ isDark }: FooterProps) {
               </a>
             </IconButton>
           </HStack>
+          
         </VStack>
         
         {/* Bottom section */}

@@ -1,0 +1,38 @@
+name: Daily arXiv Scraper
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC and 12:00 UTC
+    - cron: '0 0 * * *'
+    - cron: '0 12 * * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        pip install arxiv
+        
+    - name: Run daily arXiv scraper
+      run: |
+        python scripts/scrape_arxiv.py --daily
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add scraping/
+        git add public/data/ || echo "No combined data to add"
+        git commit -m "Add daily arXiv data for $(date +'%Y-%m-%d')" || echo "No changes to commit"
+        git push
