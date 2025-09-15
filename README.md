@@ -25,8 +25,11 @@ a modern ui wrapper for arXiv that i built because i got bored of the default in
 
 ## technical stuff
 
-built with react, typescript, and chakra ui. uses the arxiv api to fetch papers and react-pdf-viewer for pdf rendering. currently deployed on Vercel
-uses Github actions to scrape and update repository of arXiv papers.
+built with react, typescript, and chakra ui. uses the arxiv api to fetch papers and react-pdf-viewer for pdf rendering.
+
+uses Github actions to scrape and update repository of arXiv papers. 
+
+currently deployed on Vercel.
 
 ---
 
