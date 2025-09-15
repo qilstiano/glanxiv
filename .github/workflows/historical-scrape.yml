@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        fetch-depth: 0  # Fetch all history to avoid conflicts
+        fetch-depth: 0
         
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -28,7 +28,7 @@ jobs:
       run: |
         pip install arxiv
         
-    - name: Run historical arXiv scraper (90 days)
+    - name: Run historical arXiv scraper (missing 90 days)
       run: |
         # Debug: show directory structure
         echo "Current directory: $(pwd)"
@@ -38,7 +38,7 @@ jobs:
         
         # Run the script from the correct location
         cd glanxiv
-        python scraping/scraper.py --days 90
+        python scraping/scraper.py --historical
         
     - name: Commit and push changes
       run: |
@@ -49,5 +49,5 @@ jobs:
         git pull origin main --rebase
         
         git add glanxiv/scraping/daily/
-        git commit -m "Add historical arXiv data (90 days) for $(date +'%Y-%m-%d')" || echo "No changes to commit"
+        git commit -m "Add missing historical arXiv data (90 days) for $(date +'%Y-%m-%d')" || echo "No changes to commit"
         git push origin main
