@@ -25,13 +25,20 @@ jobs:
         
     - name: Run historical arXiv scraper (90 days)
       run: |
+        # Debug: show directory structure
+        echo "Current directory: $(pwd)"
+        ls -la
+        echo "glanxiv directory:"
+        ls -la glanxiv/ || echo "No glanxiv directory"
+        
+        # Run the script from the correct location
+        cd glanxiv
         python scraping/scraper.py --days 90
         
     - name: Commit and push changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add scraping/
-        git add public/data/ || echo "No combined data to add"
+        git add glanxiv/scraping/daily/
         git commit -m "Add historical arXiv data (90 days) for $(date +'%Y-%m-%d')" || echo "No changes to commit"
         git push
