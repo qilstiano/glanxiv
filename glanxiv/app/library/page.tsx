@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Box, Button, Center, Text, IconButton } from '@chakra-ui/react'
+import { Box, Button, Center, Text, IconButton, HoverCard, Portal } from '@chakra-ui/react'
 import Header from '../../components/header/Header'
 import ErrorDisplay from '../../components/ErrorDisplay'
 import PapersGrid from '../../components/PapersGrid'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import { Paper } from '../types'
 import Footer from '@/components/Footer'
-import { ChevronDown, ArrowUp } from 'lucide-react'
+import { ChevronDown, ArrowUp, Info } from 'lucide-react'
 
 export default function Library() {
   const [papers, setPapers] = useState<Paper[]>([])
@@ -24,6 +24,38 @@ export default function Library() {
   const [totalPapers, setTotalPapers] = useState(0)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
+  const [scrapeStatus, setScrapeStatus] = useState<{
+    latest_scraped: string;
+    earliest_scraped: string;
+    today_scraped: boolean;
+  } | null>(null)
+
+  // Fetch scrape status
+  const fetchScrapeStatus = useCallback(async () => {
+    try {
+      const response = await fetch('/api/scraping');
+      if (response.ok) {
+        const data = await response.json();
+        setScrapeStatus({
+          ...data.status,
+          todayScraped: isToday(data.status.latest_scraped),
+      });
+      }
+    } catch (error) {
+      console.error('Error fetching scrape status:', error);
+    }
+  }, []);
+
+  function isToday(dateString?: string): boolean {
+    if (!dateString) return false;
+    const date = new Date(dateString);
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  }
 
   // Handle search submission (on Enter)
   const handleSearchSubmit = useCallback((term: string) => {
@@ -73,14 +105,6 @@ export default function Library() {
     const categoryLower = category.toLowerCase();
     if (mainCategories.includes(categoryLower)) {
       return `${categoryLower}.all`;
-    }
-    return category;
-  };
-
-  // Helper function to format category for display
-  const formatCategoryForDisplay = (category: string): string => {
-    if (category.endsWith('.all')) {
-      return `${category.replace('.all', '')}.*`;
     }
     return category;
   };
@@ -174,7 +198,8 @@ export default function Library() {
   // Reset and fetch when search or categories change
   useEffect(() => {
     fetchPapers(1, true);
-  }, [submittedSearchTerm, selectedCategories, fetchPapers]);
+    fetchScrapeStatus();
+  }, [submittedSearchTerm, selectedCategories, fetchPapers, fetchScrapeStatus]);
 
   const loadMore = useCallback(() => {
     const nextPage = page + 1;
@@ -235,16 +260,51 @@ export default function Library() {
       />
       
       <Box py={8} px={{ base: 4, md: 6 }} maxW="7xl" mx="auto">
-        {papers.length > 0 && (
+        <Box display="flex" alignItems="center" mb={2}>
+          {/* Always show the papers count text, even if empty */}
           <Text 
             color={isDark ? "gray.400" : "gray.500"} 
-            fontSize="sm" 
-            mb={4}
+            fontSize="sm"
             fontFamily="var(--font-geist-mono)"
           >
             {getDisplayText()}
           </Text>
-        )}
+          
+          {/* Scrape Status Indicator - Always show when available */}
+          {scrapeStatus && (
+            <HoverCard.Root>
+              <HoverCard.Trigger>
+                <Box display="flex" alignItems="center" ml={2} cursor="pointer">
+                  <Box
+                    w="8px"
+                    h="8px"
+                    borderRadius="50%"
+                    bg={scrapeStatus.today_scraped ? "green.500" : "orange.500"}
+                    mr={1}
+                  />
+                  <Info size={12} color={isDark ? "gray.400" : "gray.500"} />
+                </Box>
+              </HoverCard.Trigger>
+
+              <Portal>
+                <HoverCard.Positioner>
+                  <HoverCard.Content
+                    bg={isDark ? "black" : "gray.200"}
+                    color={isDark ? "white" : "black"}
+                    fontSize="xs"
+                    borderRadius="sm"
+                    shadow="sm"
+                    fontFamily={('var(--font-geist-mono)')}
+                  >
+                    <Box>Latest scrape: {scrapeStatus.latest_scraped}</Box>
+                    <Box>Earliest scrape: {scrapeStatus.earliest_scraped}</Box>
+                    <Box>Today {scrapeStatus.today_scraped ? "scraped" : "not scraped yet"}</Box>
+                  </HoverCard.Content>
+                </HoverCard.Positioner>
+              </Portal>
+            </HoverCard.Root>
+          )}
+        </Box>
 
         <PapersGrid papers={papers} isDark={isDark} />
 

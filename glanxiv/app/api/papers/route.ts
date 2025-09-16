@@ -52,21 +52,12 @@ export async function GET(request: NextRequest) {
     if (categoryParam !== 'all') {
       const categories = categoryParam.split(',').map(cat => cat.trim());
       
-      const categoryConditions = categories.map(category => {
-        if (category.endsWith('.all')) {
-          // Handle .all pattern - match all subcategories
-          const mainCategory = category.replace('.all', '');
-          return `primary_category.ilike.${mainCategory}.%`;
-        } else {
-          // Exact category match
-          return `primary_category.eq.${category}`;
-        }
-      });
-
-      if (categoryConditions.length === 1) {
-        query = query.or(categoryConditions[0]);
+      if (categories.length === 1) {
+        // Single category filter
+        query = query.eq('primary_category', categories[0]);
       } else {
-        query = query.or(categoryConditions.join(','));
+        // Multiple categories filter - use OR condition
+        query = query.or(categories.map(cat => `primary_category.eq.${cat}`).join(','));
       }
     }
 
