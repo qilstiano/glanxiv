@@ -36,10 +36,21 @@ export default function Library() {
       const response = await fetch('/api/scraping');
       if (response.ok) {
         const data = await response.json();
+  
+        // Normalize date-only string for today check
+        const latestScraped = data.status.latest_scraped; // "YYYY-MM-DD"
+        const today = new Date();
+        const scrapedDate = new Date(latestScraped + 'T00:00:00'); // treat as local midnight
+  
+        const isTodayScraped =
+          scrapedDate.getFullYear() === today.getFullYear() &&
+          scrapedDate.getMonth() === today.getMonth() &&
+          scrapedDate.getDate() === today.getDate();
+  
         setScrapeStatus({
           ...data.status,
-          todayScraped: isToday(data.status.latest_scraped),
-      });
+          todayScraped: isTodayScraped,
+        });
       }
     } catch (error) {
       console.error('Error fetching scrape status:', error);
