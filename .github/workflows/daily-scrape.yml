@@ -11,7 +11,7 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
     
     steps:
@@ -40,11 +40,12 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
+        cache-dependency-path: glanxiv/scraping/package.json
         
     - name: Install npm dependencies
       run: |
         cd glanxiv/scraping
-        npm install
+        npm install --no-package-lock  # Skip lock file generation
         
     - name: Push daily data to Supabase
       run: |
