@@ -206,15 +206,6 @@ function SearchBar({
             }}
           >
             {selectedCategories.map((category) => {
-              // Find the display name for this category
-              let displayName = `#${category}`;
-              
-              // Check if this is a main category that represents "all" subcategories
-              const mainCategory = mainCategories.find(mc => mc.id === category);
-              if (mainCategory) {
-                displayName = `#${category}.all`;
-              }
-              
               return (
                 <Tag.Root
                   key={category}
@@ -224,7 +215,7 @@ function SearchBar({
                   borderRadius="full"
                   flexShrink={0}
                 >
-                  <Tag.Label>{displayName}</Tag.Label>
+                  <Tag.Label>#{category}</Tag.Label> {/* Just use the category directly */}
                   <Tag.EndElement>
                     <Tag.CloseTrigger 
                       onClick={(e) => {

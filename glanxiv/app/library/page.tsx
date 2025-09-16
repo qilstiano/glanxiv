@@ -55,12 +55,12 @@ export default function Library() {
       return;
     }
     
-    // Toggle category selection
+    // Toggle category selection - ensure no duplicates
     setSelectedCategories(prev => {
       if (prev.includes(category)) {
         return prev.filter(cat => cat !== category);
       } else {
-        return [...prev, category];
+        return [...prev.filter(cat => cat !== category), category];
       }
     });
   }, []);
@@ -203,7 +203,9 @@ export default function Library() {
     }
 
     if (selectedCategories.length > 0) {
-      text += ` in ${selectedCategories.join(', ')}`;
+      // Ensure no duplicates and proper formatting
+      const uniqueCategories = [...new Set(selectedCategories)];
+      text += ` in ${uniqueCategories.join(', ')}`;
     }
 
     return text;

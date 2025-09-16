@@ -39,13 +39,7 @@ function Header({ isDark, onToggleTheme, selectedCategories: propSelectedCategor
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
-  const [internalSelectedCategories, setInternalSelectedCategories] = useState<string[]>(propSelectedCategories);
   const isMobile = useBreakpointValue({ base: true, md: false });
-
-  // Sync with parent component's selectedCategories
-  useEffect(() => {
-    setInternalSelectedCategories(propSelectedCategories);
-  }, [propSelectedCategories]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -92,38 +86,12 @@ function Header({ isDark, onToggleTheme, selectedCategories: propSelectedCategor
   };
 
   const handleCategoryChange = (category: string) => {
-    if (category === 'all') {
-      setInternalSelectedCategories([]);
-      onCategoryChange('all');
-    } else {
-      // Format the category code (capitalize last 2 letters)
-      const formattedCategory = formatCategoryCode(category);
-      
-      // Toggle category selection
-      const newCategories = internalSelectedCategories.includes(formattedCategory)
-        ? internalSelectedCategories.filter(c => c !== formattedCategory)
-        : [...internalSelectedCategories, formattedCategory];
-      
-      setInternalSelectedCategories(newCategories);
-      
-      // Update parent component
-      if (newCategories.length === 0) {
-        onCategoryChange('all');
-      } else {
-        onCategoryChange(newCategories.join(','));
-      }
-    }
+    onCategoryChange(category); // Just call the parent function directly
   };
 
   const handleRemoveCategory = (category: string) => {
-    const newCategories = internalSelectedCategories.filter(c => c !== category);
-    setInternalSelectedCategories(newCategories);
-    
-    if (newCategories.length === 0) {
-      onCategoryChange('all');
-    } else {
-      onCategoryChange(newCategories.join(','));
-    }
+    // Remove category by calling parent function
+    onCategoryChange(category); // This will toggle it off
   };
 
   const handleSearchChange = (term: string) => {
@@ -157,27 +125,6 @@ function Header({ isDark, onToggleTheme, selectedCategories: propSelectedCategor
     } else {
       // Handle regular text search
       onSearchSubmit(searchTerm);
-    }
-  };
-
-  // Update the handleCategorySubmit function to be case-insensitive with proper formatting
-  const handleCategoryAutoComplete = () => {
-    if (searchTerm.startsWith('#') && searchTerm.length > 1) {
-      const categoryValue = searchTerm.slice(1).toLowerCase();
-      
-      // Format the category code (capitalize last 2 letters)
-      const formattedCategory = formatCategoryCode(categoryValue);
-      
-      const categoryExists = allCategories.some(cat => 
-        cat.value.toLowerCase() === formattedCategory.toLowerCase()
-      ) || mainCategories.some(mc => 
-        mc.id.toLowerCase() === formattedCategory.toLowerCase()
-      );
-      
-      if (categoryExists) {
-        // Auto-complete the search term with properly formatted category
-        onSearchChange(`#${formattedCategory}`);
-      }
     }
   };
 
@@ -266,10 +213,14 @@ function Header({ isDark, onToggleTheme, selectedCategories: propSelectedCategor
                         isDark={isDark}
                         searchTerm={searchTerm}
                         onSearchChange={handleSearchChange}
-                        onSubmit={handleSearchSubmit} // Use the new submit handler
-                        selectedCategories={internalSelectedCategories}
+                        onSubmit={handleSearchSubmit}
+                        selectedCategories={propSelectedCategories}
                         onRemoveCategory={handleRemoveCategory}
-                        onSetCategories={setInternalSelectedCategories}
+                        onSetCategories={(categories) => {
+                          // Clear existing categories and set new ones
+                          propSelectedCategories.forEach(cat => onCategoryChange(cat));
+                          categories.forEach(cat => onCategoryChange(cat));
+                        }}
                         isMobile={isMobile}
                         onFocus={() => setShowCategoryDropdown(true)}
                       />
@@ -336,9 +287,13 @@ function Header({ isDark, onToggleTheme, selectedCategories: propSelectedCategor
                         searchTerm={searchTerm}
                         onSearchChange={handleSearchChange}
                         onSubmit={handleSearchSubmit}
-                        selectedCategories={internalSelectedCategories}
+                        selectedCategories={propSelectedCategories}
                         onRemoveCategory={handleRemoveCategory}
-                        onSetCategories={setInternalSelectedCategories}
+                        onSetCategories={(categories) => {
+                          // Clear existing categories and set new ones
+                          propSelectedCategories.forEach(cat => onCategoryChange(cat));
+                          categories.forEach(cat => onCategoryChange(cat));
+                        }}
                         isMobile={isMobile}
                         onFocus={() => setShowCategoryDropdown(true)}
                       />
@@ -352,7 +307,7 @@ function Header({ isDark, onToggleTheme, selectedCategories: propSelectedCategor
             {!isScrolled && (
               <DesktopNav 
                 isDark={isDark}
-                selectedCategories={internalSelectedCategories}
+                selectedCategories={propSelectedCategories}
                 onCategoryChange={handleCategoryChange}
               />
             )}
@@ -371,7 +326,7 @@ function Header({ isDark, onToggleTheme, selectedCategories: propSelectedCategor
         isDark={isDark}
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
-        selectedCategories={internalSelectedCategories}
+        selectedCategories={propSelectedCategories}
         onCategoryChange={handleCategoryChange}
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
