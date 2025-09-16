@@ -28,29 +28,24 @@ import { allCategories, mainCategories } from '../data/categories';
 interface HeaderProps {
   isDark: boolean;
   onToggleTheme: () => void;
-  selectedCategory: string;
+  selectedCategories: string[];
   onCategoryChange: (category: string) => void;
   searchTerm: string;
   onSearchChange: (term: string) => void;
+  onSearchSubmit: (term: string) => void;
 }
 
-function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, searchTerm, onSearchChange }: HeaderProps) {
+function Header({ isDark, onToggleTheme, selectedCategories: propSelectedCategories, onCategoryChange, searchTerm, onSearchChange, onSearchSubmit }: HeaderProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [internalSelectedCategories, setInternalSelectedCategories] = useState<string[]>(propSelectedCategories);
   const isMobile = useBreakpointValue({ base: true, md: false });
 
-  // Sync with parent component's selectedCategory
+  // Sync with parent component's selectedCategories
   useEffect(() => {
-    if (selectedCategory === 'all') {
-      setSelectedCategories([]);
-    } else if (selectedCategory) {
-      // Handle both single category and comma-separated categories
-      const categories = selectedCategory.split(',');
-      setSelectedCategories(categories);
-    }
-  }, [selectedCategory]);
+    setInternalSelectedCategories(propSelectedCategories);
+  }, [propSelectedCategories]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -75,22 +70,41 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Function to capitalize the last 2 letters of a category
+  const formatCategoryCode = (category: string): string => {
+    // Handle .all patterns first
+    if (category.endsWith('.all')) {
+      const mainCat = category.replace('.all', '');
+      return `${mainCat}.all`;
+    }
+    
+    // Handle regular category patterns like cs.AI, math.FA
+    const parts = category.split('.');
+    if (parts.length === 2) {
+      const [main, sub] = parts;
+      if (sub.length === 2) {
+        return `${main}.${sub.toUpperCase()}`;
+      }
+      return `${main}.${sub}`;
+    }
+    
+    return category;
+  };
+
   const handleCategoryChange = (category: string) => {
     if (category === 'all') {
-      setSelectedCategories([]);
+      setInternalSelectedCategories([]);
       onCategoryChange('all');
     } else {
-      // Handle .all variants by converting them to main category IDs
-      const processedCategory = category.endsWith('.all') 
-        ? category.replace('.all', '') 
-        : category;
+      // Format the category code (capitalize last 2 letters)
+      const formattedCategory = formatCategoryCode(category);
       
       // Toggle category selection
-      const newCategories = selectedCategories.includes(processedCategory)
-        ? selectedCategories.filter(c => c !== processedCategory)
-        : [...selectedCategories, processedCategory];
+      const newCategories = internalSelectedCategories.includes(formattedCategory)
+        ? internalSelectedCategories.filter(c => c !== formattedCategory)
+        : [...internalSelectedCategories, formattedCategory];
       
-      setSelectedCategories(newCategories);
+      setInternalSelectedCategories(newCategories);
       
       // Update parent component
       if (newCategories.length === 0) {
@@ -102,8 +116,8 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
   };
 
   const handleRemoveCategory = (category: string) => {
-    const newCategories = selectedCategories.filter(c => c !== category);
-    setSelectedCategories(newCategories);
+    const newCategories = internalSelectedCategories.filter(c => c !== category);
+    setInternalSelectedCategories(newCategories);
     
     if (newCategories.length === 0) {
       onCategoryChange('all');
@@ -118,56 +132,53 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
     // Show dropdown when user types #
     if (term.startsWith('#')) {
       setShowCategoryDropdown(true);
-      return; // Don't process further when still typing
     }
   };
 
-  // Update the handleCategorySubmit function to be case-insensitive
-  const handleCategorySubmit = () => {
-    if (searchTerm.startsWith('#') && searchTerm.length > 1) {
-      const categoryValue = searchTerm.slice(1).toLowerCase(); // Convert to lowercase
-      
-      // Handle .all variants
-      const processedCategory = categoryValue.endsWith('.all') 
-        ? categoryValue.replace('.all', '') 
-        : categoryValue;
-      
-      const categoryExists = allCategories.some(cat => 
-        cat.value.toLowerCase() === processedCategory
-      ) || mainCategories.some(mc => 
-        mc.id.toLowerCase() === processedCategory
-      );
-      
-      if (categoryExists) {
-        handleCategoryChange(processedCategory);
-        onSearchChange('');
-        setShowCategoryDropdown(false);
-      }
-    }
-  };
-
+  // Handle search submission (Enter key)
   const handleSearchSubmit = () => {
     if (searchTerm.startsWith('#') && searchTerm.length > 1) {
       const categoryValue = searchTerm.slice(1).toLowerCase();
       
-      // Handle .all variants
-      const processedCategory = categoryValue.endsWith('.all') 
-        ? categoryValue.replace('.all', '') 
-        : categoryValue;
+      // Format the category code (capitalize last 2 letters)
+      const formattedCategory = formatCategoryCode(categoryValue);
       
       const categoryExists = allCategories.some(cat => 
-        cat.value.toLowerCase() === processedCategory
+        cat.value.toLowerCase() === formattedCategory.toLowerCase()
       ) || mainCategories.some(mc => 
-        mc.id.toLowerCase() === processedCategory
+        mc.id.toLowerCase() === formattedCategory.toLowerCase()
       );
       
       if (categoryExists) {
-        handleCategoryChange(processedCategory);
+        handleCategoryChange(formattedCategory);
         onSearchChange('');
         setShowCategoryDropdown(false);
       }
+    } else {
+      // Handle regular text search
+      onSearchSubmit(searchTerm);
     }
-    // If it's not a category, just keep it as free text search
+  };
+
+  // Update the handleCategorySubmit function to be case-insensitive with proper formatting
+  const handleCategoryAutoComplete = () => {
+    if (searchTerm.startsWith('#') && searchTerm.length > 1) {
+      const categoryValue = searchTerm.slice(1).toLowerCase();
+      
+      // Format the category code (capitalize last 2 letters)
+      const formattedCategory = formatCategoryCode(categoryValue);
+      
+      const categoryExists = allCategories.some(cat => 
+        cat.value.toLowerCase() === formattedCategory.toLowerCase()
+      ) || mainCategories.some(mc => 
+        mc.id.toLowerCase() === formattedCategory.toLowerCase()
+      );
+      
+      if (categoryExists) {
+        // Auto-complete the search term with properly formatted category
+        onSearchChange(`#${formattedCategory}`);
+      }
+    }
   };
 
   return (
@@ -214,20 +225,6 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
             >
               {/* Left: Mobile Menu + Logo */}
               <Flex align="center" gap={3} flexShrink={0}>
-                {/* Mobile Menu Button */}
-                {/* {isMobile && (
-                  <IconButton
-                    aria-label="Open menu"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsDrawerOpen(true)}
-                    color={isDark ? "gray.300" : "gray.700"}
-                    _hover={{ bg: isDark ? "gray.700" : "gray.100" }}
-                  >
-                    <LuMenu />
-                  </IconButton>
-                )} */}
-                
                 {/* Logo */}
                 <Flex align="center" gap={2}>
                   <motion.div
@@ -269,10 +266,10 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
                         isDark={isDark}
                         searchTerm={searchTerm}
                         onSearchChange={handleSearchChange}
-                        onSubmit={handleCategorySubmit} // Add this prop
-                        selectedCategories={selectedCategories}
+                        onSubmit={handleSearchSubmit} // Use the new submit handler
+                        selectedCategories={internalSelectedCategories}
                         onRemoveCategory={handleRemoveCategory}
-                        onSetCategories={setSelectedCategories}
+                        onSetCategories={setInternalSelectedCategories}
                         isMobile={isMobile}
                         onFocus={() => setShowCategoryDropdown(true)}
                       />
@@ -338,10 +335,10 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
                         isDark={isDark}
                         searchTerm={searchTerm}
                         onSearchChange={handleSearchChange}
-                        onSubmit={handleCategorySubmit} // Add this prop
-                        selectedCategories={selectedCategories}
+                        onSubmit={handleSearchSubmit}
+                        selectedCategories={internalSelectedCategories}
                         onRemoveCategory={handleRemoveCategory}
-                        onSetCategories={setSelectedCategories}
+                        onSetCategories={setInternalSelectedCategories}
                         isMobile={isMobile}
                         onFocus={() => setShowCategoryDropdown(true)}
                       />
@@ -355,7 +352,7 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
             {!isScrolled && (
               <DesktopNav 
                 isDark={isDark}
-                selectedCategories={selectedCategories}
+                selectedCategories={internalSelectedCategories}
                 onCategoryChange={handleCategoryChange}
               />
             )}
@@ -374,8 +371,8 @@ function Header({ isDark, onToggleTheme, selectedCategory, onCategoryChange, sea
         isDark={isDark}
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
-        selectedCategories={selectedCategories}
-        onCategoryChange={handleCategoryChange} // Change from onCategoriesChange to onCategoryChange
+        selectedCategories={internalSelectedCategories}
+        onCategoryChange={handleCategoryChange}
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
       /> */}

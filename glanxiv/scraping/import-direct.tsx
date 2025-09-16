@@ -90,8 +90,8 @@ async function importJsonToPostgres(): Promise<void> {
   console.log(`✅ Found ${files.length} JSON files to process`);
   
   try {
-    await createTables();
-    await ensureConstraints(); // Add this to ensure constraints exist
+    // No need to create tables manually since we'll create them via SQL above
+    await ensureConstraints();
     
     let totalProcessed = 0;
     let totalErrors = 0;
@@ -120,19 +120,6 @@ async function importJsonToPostgres(): Promise<void> {
           } catch (error) {
             console.error(`   ❌ Error processing paper ${paper.id}:`, error instanceof Error ? error.message : 'Unknown error');
             errorCount++;
-            
-            // If it's a constraint error, try the fallback insert
-            if (error instanceof Error && error.message.includes('constraint')) {
-              console.log('   🟡 Trying fallback insert...');
-              try {
-                await insertPaperFallback(paper);
-                successCount++;
-                errorCount--;
-                console.log('   ✅ Fallback insert successful');
-              } catch (fallbackError) {
-                console.error('   ❌ Fallback insert also failed:', fallbackError instanceof Error ? fallbackError.message : 'Unknown error');
-              }
-            }
           }
         }
         
@@ -378,7 +365,7 @@ async function insertPaperFallback(paperData: PaperData): Promise<void> {
       const authorName = paperData.authors[order];
       
       // Check if author exists
-      let authorResult = await sql<AuthorResult[]>`
+      const authorResult = await sql<AuthorResult[]>`
         SELECT id FROM authors WHERE name = ${authorName}
       `;
       
@@ -410,7 +397,7 @@ async function insertPaperFallback(paperData: PaperData): Promise<void> {
       if (!categoryName) continue;
       
       // Check if category exists
-      let categoryResult = await sql<CategoryResult[]>`
+      const categoryResult = await sql<CategoryResult[]>`
         SELECT id FROM categories WHERE name = ${categoryName}
       `;
       
@@ -445,4 +432,4 @@ importJsonToPostgres()
   .catch((error: unknown) => {
     console.error('❌ Import failed:', error instanceof Error ? error.message : 'Unknown error');
     process.exit(1);
-  });
+});

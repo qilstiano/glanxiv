@@ -1,115 +1,119 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '../../lib/supabase';
 import { Paper } from '@/app/types';
 
-// Cache for papers
-let allPapersCache: Paper[] = [];
-let lastCacheUpdate = 0;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+// Define types for the Supabase response
+interface SupabaseAuthor {
+  author_order: number;
+  authors: {
+    name: string;
+  };
+}
 
-export const loadPapers = (): Paper[] => {
-  const now = Date.now();
-  if (allPapersCache.length > 0 && now - lastCacheUpdate < CACHE_TTL) {
-    return allPapersCache;
-  }
+interface SupabaseCategory {
+  categories: {
+    name: string;
+  };
+}
 
-  try {
-    const dailyDir = path.join(process.cwd(), 'scraping', 'daily');
-    if (!fs.existsSync(dailyDir)) {
-      console.log('Daily folder not found');
-      return [];
-    }
-
-    const files = fs.readdirSync(dailyDir).filter(f => f.endsWith('.json'));
-    const allPapers: Paper[] = [];
-
-    for (const file of files) {
-      const filePath = path.join(dailyDir, file);
-      try {
-        const fileData = fs.readFileSync(filePath, 'utf8');
-        const json = JSON.parse(fileData);
-        allPapers.push(...json);
-      } catch (e) {
-        console.error(`Failed to parse ${file}:`, e);
-      }
-    }
-
-    // Sort by date (newest first)
-    allPapers.sort((a, b) => {
-      return new Date(b.published).getTime() - new Date(a.published).getTime();
-    });
-
-    // Validate papers
-    const validatedData = allPapers.map((paper: Paper) => ({
-      id: paper.id || Math.random().toString(36).substr(2, 9),
-      title: paper.title || 'No title',
-      authors: paper.authors || [],
-      abstract: paper.abstract || '',
-      pdf_url: paper.pdf_url || '',
-      published: paper.published || new Date().toISOString(),
-      categories: paper.categories || [],
-      primary_category: paper.primary_category || ''
-    }));
-
-    allPapersCache = validatedData;
-    lastCacheUpdate = now;
-    console.log(`Loaded ${validatedData.length} papers`);
-
-    return validatedData;
-  } catch (error) {
-    console.error('Error loading papers:', error);
-    return [];
-  }
-};
-
-// Simple search and category functions for basic use
-export const matchesSearch = (paper: Paper, term: string): boolean => {
-  if (!term) return true;
-  
-  const termLower = term.toLowerCase();
-  const titleLower = paper.title.toLowerCase();
-  const abstractLower = paper.abstract.toLowerCase();
-  const authorsLower = paper.authors.map(author => author.toLowerCase());
-  
-  return titleLower.includes(termLower) ||
-         abstractLower.includes(termLower) ||
-         authorsLower.some(author => author.includes(termLower));
-};
-
-export const matchesCategory = (paper: Paper, category: string): boolean => {
-  if (category === 'all') return true;
-  
-  const categoryLower = category.toLowerCase();
-  const paperCategories = [
-    ...paper.categories.map(c => c.toLowerCase()),
-    paper.primary_category?.toLowerCase() || ''
-  ];
-  
-  return paperCategories.some(paperCat => 
-    paperCat === categoryLower || paperCat.startsWith(categoryLower + '.')
-  );
-};
+interface SupabasePaper {
+  arxiv_id: string;
+  title: string;
+  abstract: string | null;
+  pdf_url: string | null;
+  published: string;
+  primary_category: string | null;
+  paper_authors: SupabaseAuthor[];
+  paper_categories: SupabaseCategory[];
+}
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '12');
+    const limit = parseInt(searchParams.get('limit') || '100');
+    const categoryParam = searchParams.get('category') || 'all';
     
-    const papers = loadPapers();
+    // Build the base query
+    let query = supabase
+      .from('papers')
+      .select(`
+        *,
+        paper_authors (
+          author_order,
+          authors (name)
+        ),
+        paper_categories (
+          categories (name)
+        )
+      `, { count: 'exact' });
+
+    // Apply category filter if specified
+    if (categoryParam !== 'all') {
+      const categories = categoryParam.split(',').map(cat => cat.trim());
+      
+      const categoryConditions = categories.map(category => {
+        if (category.endsWith('.all')) {
+          // Handle .all pattern - match all subcategories
+          const mainCategory = category.replace('.all', '');
+          return `primary_category.ilike.${mainCategory}.%`;
+        } else {
+          // Exact category match
+          return `primary_category.eq.${category}`;
+        }
+      });
+
+      if (categoryConditions.length === 1) {
+        query = query.or(categoryConditions[0]);
+      } else {
+        query = query.or(categoryConditions.join(','));
+      }
+    }
+
+    // Apply pagination using range()
+    const start = (page - 1) * limit;
+    const end = start + limit - 1;
     
-    // Basic pagination without filtering
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedPapers = papers.slice(startIndex, endIndex);
-    
+    query = query
+      .order('published', { ascending: false })
+      .range(start, end);
+
+    const { data: papersData, error, count } = await query;
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      );
+    }
+
+    // Transform the data
+    const transformedPapers: Paper[] = (papersData || []).map((paper: SupabasePaper) => {
+      const authors = paper.paper_authors
+        .sort((a: SupabaseAuthor, b: SupabaseAuthor) => a.author_order - b.author_order)
+        .map((pa: SupabaseAuthor) => pa.authors.name);
+      
+      const categories = paper.paper_categories.map((pc: SupabaseCategory) => pc.categories.name);
+      
+      return {
+        id: `http://arxiv.org/abs/${paper.arxiv_id}`,
+        title: paper.title,
+        authors,
+        abstract: paper.abstract || '',
+        pdf_url: paper.pdf_url || `http://arxiv.org/pdf/${paper.arxiv_id}`,
+        published: paper.published,
+        categories,
+        primary_category: paper.primary_category || ''
+      };
+    });
+
     return NextResponse.json({
-      papers: paginatedPapers,
-      total: papers.length,
+      papers: transformedPapers,
+      total: count || 0,
       page,
-      totalPages: Math.ceil(papers.length / limit),
-      hasMore: endIndex < papers.length
+      totalPages: Math.ceil((count || 0) / limit),
+      hasMore: end < (count || 0) - 1
     });
     
   } catch (error) {
