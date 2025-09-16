@@ -10,15 +10,16 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        fetch-depth: 0  # Fetch all history instead of just the latest commit
+        fetch-depth: 0
       
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -31,26 +32,43 @@ jobs:
         
     - name: Run daily arXiv scraper
       run: |
-        # Debug: show directory structure
-        echo "Current directory: $(pwd)"
-        ls -la
-        echo "glanxiv directory:"
-        ls -la glanxiv/ || echo "No glanxiv directory"
-        echo "scraping directory:"
-        ls -la glanxiv/scraping/ || echo "No scraping directory"
-        
-        # Run the script from the correct location
         cd glanxiv
         python scraping/scraper.py --daily
         
-    - name: Commit and push changes
+    - name: Install Node.js for Supabase import
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install npm dependencies
+      run: |
+        cd glanxiv/scraping
+        npm install
+        
+    - name: Push daily data to Supabase
+      run: |
+        cd glanxiv/scraping
+        npx tsx import-direct.tsx --daily
+        
+    - name: Update scraping status file
+      run: |
+        cd glanxiv/scraping
+        python update_status.py
+        
+    - name: Commit and push only status file
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         
-        # Pull the latest changes first to avoid conflicts
         git pull origin main --rebase
         
-        git add glanxiv/scraping/daily/
-        git commit -m "Add daily arXiv data for $(date +'%Y-%m-%d')" || echo "No changes to commit"
+        # Only add the status file, not the daily data
+        git add glanxiv/scraping/scraping_status.json
+        git commit -m "Update scraping status for daily data - $(date +'%Y-%m-%d')" || echo "No status changes to commit"
         git push origin main
+        
+    - name: Clean up daily data files
+      run: |
+        # Remove the downloaded JSON files to avoid committing them
+        rm -f glanxiv/scraping/daily/*.json

@@ -9,8 +9,9 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
     
     steps:
     - name: Checkout repository
@@ -30,24 +31,43 @@ jobs:
         
     - name: Run historical arXiv scraper (missing 90 days)
       run: |
-        # Debug: show directory structure
-        echo "Current directory: $(pwd)"
-        ls -la
-        echo "glanxiv directory:"
-        ls -la glanxiv/ || echo "No glanxiv directory"
-        
-        # Run the script from the correct location
         cd glanxiv
         python scraping/scraper.py --historical
         
-    - name: Commit and push changes
+    - name: Install Node.js for Supabase import
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install npm dependencies
+      run: |
+        cd glanxiv/scraping
+        npm install
+        
+    - name: Push historical data to Supabase
+      run: |
+        cd glanxiv/scraping
+        npx tsx import-direct.tsx --historical
+        
+    - name: Update scraping status file
+      run: |
+        cd glanxiv/scraping
+        python update_status.py
+        
+    - name: Commit and push only status file
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         
-        # Pull latest changes first to avoid conflicts
         git pull origin main --rebase
         
-        git add glanxiv/scraping/daily/
-        git commit -m "Add missing historical arXiv data (90 days) for $(date +'%Y-%m-%d')" || echo "No changes to commit"
+        # Only add the status file, not the daily data
+        git add glanxiv/scraping/scraping_status.json
+        git commit -m "Update scraping status for historical data - $(date +'%Y-%m-%d')" || echo "No status changes to commit"
         git push origin main
+        
+    - name: Clean up daily data files
+      run: |
+        # Remove the downloaded JSON files to avoid committing them
+        rm -f glanxiv/scraping/daily/*.json
