@@ -1,4 +1,4 @@
-
+note: current development is halted, will resume soon!
 <img width="320" height="160" alt="glanxiv_highres" src="https://github.com/user-attachments/assets/ab35d0ca-0c38-4a09-b9b4-23f9a9928eba" />
 
 glanxiv (glan-siv) is a modern ui wrapper for arXiv that i built because i got bored of the default interface and have been using arxiv a lot recently for research. wanted something cleaner and more enjoyable to browse papers with.
